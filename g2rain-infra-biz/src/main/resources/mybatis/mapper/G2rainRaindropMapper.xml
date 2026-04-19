@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.g2rain.infra.dao.G2rainRaindropDao">
+    <!-- 通用结果集映射（包含所有字段：主键+基础字段+业务字段） -->
+    <resultMap id="BaseResultMap" type="com.g2rain.infra.dao.po.G2rainRaindropPo">
+        <!-- 主键字段 -->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <!-- 基础字段（createTime、updateTime） -->
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <!-- 业务字段（其他自定义字段） -->
+        <result column="biz_tag" property="bizTag" jdbcType="VARCHAR"/>
+        <result column="max_id" property="maxId" jdbcType="BIGINT"/>
+        <result column="step" property="step" jdbcType="INTEGER"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <!-- version字段（如果存在） -->
+        <result column="version" property="version" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 定义可复用排序方向片段 -->
+    <sql id="directionClause">
+        <choose>
+            <when test="item.direction == 'DESC'">DESC</when>
+            <otherwise>ASC</otherwise>
+        </choose>
+    </sql>
+
+    <!-- 可复用的动态排序 SQL 片段 -->
+    <sql id="dynamicOrderBy">
+        <trim prefix="ORDER BY" suffixOverrides=",">
+            <foreach collection="safeSorts" item="item" separator=",">
+                <choose>
+                    <when test="item.column == 'id'">
+                        id
+                        <include refid="directionClause"/>
+                    </when>
+                    <when test="item.column == 'createTime'">
+                        create_time
+                        <include refid="directionClause"/>
+                    </when>
+                    <when test="item.column == 'updateTime'">
+                        update_time
+                        <include refid="directionClause"/>
+                    </when>
+                    <when test="item.column == 'bizTag'">
+                        biz_tag
+                        <include refid="directionClause"/>
+                    </when>
+                    <when test="item.column == 'maxId'">
+                        max_id
+                        <include refid="directionClause"/>
+                    </when>
+                    <when test="item.column == 'step'">
+                        step
+                        <include refid="directionClause"/>
+                    </when>
+                    <when test="item.column == 'description'">
+                        description
+                        <include refid="directionClause"/>
+                    </when>
+                </choose>
+            </foreach>
+        </trim>
+    </sql>
+
+    <!-- 插入单条记录 -->
+    <insert id="insert" parameterType="com.g2rain.infra.dao.po.G2rainRaindropPo">
+        INSERT INTO g2rain_raindrop (
+        <!-- 基础字段 -->
+        create_time, update_time,
+        <!-- 业务字段 -->
+        biz_tag, max_id, step, description,
+        <!-- version字段（如果存在） -->
+        version
+        ) VALUES (
+        <!-- 基础字段值 -->
+        #{createTime, jdbcType=TIMESTAMP}, #{updateTime, jdbcType=TIMESTAMP},
+        <!-- 业务字段值 -->
+        #{bizTag, jdbcType=VARCHAR}, #{maxId, jdbcType=BIGINT}, #{step, jdbcType=INTEGER},
+        #{description, jdbcType=VARCHAR},
+        <!-- version字段值（如果存在，设置默认值为0） -->
+        0
+        )
+    </insert>
+
+    <!-- 批量插入记录 -->
+    <insert id="insertMultiple" parameterType="java.util.List">
+        INSERT INTO g2rain_raindrop (
+        <!-- 基础字段 -->
+        create_time, update_time,
+        <!-- 业务字段 -->
+        biz_tag, max_id, step, description,
+        <!-- version字段（如果存在） -->
+        version
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            <!-- 基础字段值 -->
+            #{item.createTime, jdbcType=TIMESTAMP}, #{item.updateTime, jdbcType=TIMESTAMP},
+            <!-- 业务字段值 -->
+            #{item.bizTag, jdbcType=VARCHAR}, #{item.maxId, jdbcType=BIGINT}, #{item.step, jdbcType=INTEGER},
+            #{item.description, jdbcType=VARCHAR},
+            <!-- version字段值（如果存在，设置默认值为0） -->
+            0
+            )
+        </foreach>
+    </insert>
+
+    <!-- 根据ID更新记录（包含基础字段和业务字段） -->
+    <update id="update" parameterType="com.g2rain.infra.dao.po.G2rainRaindropPo">
+        UPDATE g2rain_raindrop
+        <set>
+            <!-- 基础字段更新（排除version，version单独处理） -->
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+            <!-- 业务字段更新 -->
+            <if test="bizTag != null">
+                biz_tag = #{bizTag, jdbcType=VARCHAR},
+            </if>
+            <if test="maxId != null">
+                max_id = #{maxId, jdbcType=BIGINT},
+            </if>
+            <if test="step != null">
+                step = #{step, jdbcType=INTEGER},
+            </if>
+            <if test="description != null">
+                description = #{description, jdbcType=VARCHAR},
+            </if>
+            <!-- version字段更新（如果存在，版本号自增） -->
+            version = version + 1
+        </set>
+        WHERE id = #{id, jdbcType=BIGINT}
+    </update>
+
+    <!-- 根据ID和Version更新记录（乐观锁更新，包含基础字段和业务字段） -->
+    <update id="updateByVersion" parameterType="com.g2rain.infra.dao.po.G2rainRaindropPo">
+        UPDATE g2rain_raindrop
+        <set>
+            <!-- 基础字段更新（排除version，version单独处理） -->
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+            <!-- 业务字段更新 -->
+            <if test="bizTag != null">
+                biz_tag = #{bizTag, jdbcType=VARCHAR},
+            </if>
+            <if test="maxId != null">
+                max_id = #{maxId, jdbcType=BIGINT},
+            </if>
+            <if test="step != null">
+                step = #{step, jdbcType=INTEGER},
+            </if>
+            <if test="description != null">
+                description = #{description, jdbcType=VARCHAR},
+            </if>
+            <!-- version字段更新（乐观锁版本号自增） -->
+            version = version + 1
+        </set>
+        WHERE id = #{id, jdbcType=BIGINT}
+        AND version = #{version, jdbcType=INTEGER}
+    </update>
+
+    <!-- 根据ID删除记录（物理删除记录） -->
+    <delete id="delete" parameterType="Long">
+        DELETE
+        FROM g2rain_raindrop
+        WHERE id = #{id, jdbcType=BIGINT}
+    </delete>
+
+    <!-- 根据ID查询记录（查询所有字段） -->
+    <select id="selectById" parameterType="Long" resultMap="BaseResultMap">
+        SELECT
+        <!-- 主键字段 -->
+        id,
+        <!-- 基础字段 -->
+        create_time, update_time,
+        <!-- 业务字段 -->
+        biz_tag, max_id, step, description,
+        <!-- version字段（如果存在） -->
+        version
+        FROM g2rain_raindrop
+        WHERE id = #{id, jdbcType=BIGINT}
+    </select>
+
+    <!-- 根据SelectDto条件查询列表 -->
+    <select id="selectList" parameterType="com.g2rain.infra.dto.G2rainRaindropSelectDto" resultMap="BaseResultMap">
+        SELECT
+        <!-- 主键字段 -->
+        id,
+        <!-- 基础字段 -->
+        create_time, update_time,
+        <!-- 业务字段 -->
+        biz_tag, max_id, step, description,
+        <!-- version字段（如果存在） -->
+        version
+        FROM g2rain_raindrop
+        <where>
+            <!-- 主键筛选 -->
+            <if test="id != null">
+                AND id = #{id, jdbcType=BIGINT}
+            </if>
+            <if test="ids != null and ids.size() > 0">
+                AND id IN
+                <foreach collection="ids" item="item" open="(" separator="," close=")">
+                    #{item, jdbcType=BIGINT}
+                </foreach>
+            </if>
+            <!-- 基础字段筛选（createTime和updateTime时间筛选） -->
+            <if test="createTime != null">
+                <if test="createTime[0] != '' and (createTime.size() lt 2 or createTime[1] == '')">
+                    AND create_time >= #{createTime[0], jdbcType=TIMESTAMP}
+                </if>
+                <if test="createTime.size() >= 2 and createTime[0] == '' and createTime[1] != ''">
+                    AND create_time &lt;= #{createTime[1], jdbcType=TIMESTAMP}
+                </if>
+                <if test="createTime.size() >= 2 and createTime[0] != '' and createTime[1] != ''">
+                    AND create_time BETWEEN #{createTime[0], jdbcType=TIMESTAMP}
+                    AND #{createTime[1], jdbcType=TIMESTAMP}
+                </if>
+            </if>
+            <if test="updateTime != null">
+                <if test="updateTime[0] != '' and (updateTime.size() lt 2 or updateTime[1] == '')">
+                    AND update_time >= #{updateTime[0], jdbcType=TIMESTAMP}
+                </if>
+                <if test="updateTime.size() >= 2 and updateTime[0] == '' and updateTime[1] != ''">
+                    AND update_time &lt;= #{updateTime[1], jdbcType=TIMESTAMP}
+                </if>
+                <if test="updateTime.size() >= 2 and updateTime[0] != '' and updateTime[1] != ''">
+                    AND update_time BETWEEN #{updateTime[0], jdbcType=TIMESTAMP}
+                    AND #{updateTime[1], jdbcType=TIMESTAMP}
+                </if>
+            </if>
+            <!-- 业务字段筛选 -->
+            <if test="bizTag != null">
+                AND biz_tag = #{bizTag, jdbcType=VARCHAR}
+            </if>
+            <if test="maxId != null">
+                AND max_id = #{maxId, jdbcType=BIGINT}
+            </if>
+            <if test="step != null">
+                AND step = #{step, jdbcType=INTEGER}
+            </if>
+            <if test="description != null">
+                AND description = #{description, jdbcType=VARCHAR}
+            </if>
+        </where>
+        <include refid="dynamicOrderBy"/>
+    </select>
+
+    <update id="updateMaxId" parameterType="string">
+        UPDATE g2rain_raindrop
+        SET max_id      = max_id + step,
+            version     = version + 1,
+            update_time = NOW()
+        WHERE biz_tag = #{bizTag, jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateMaxIdByCustomStep" parameterType="map">
+        UPDATE g2rain_raindrop
+        SET max_id      = max_id + #{step},
+            version     = version + 1,
+            update_time = NOW()
+        WHERE biz_tag = #{bizTag, jdbcType=VARCHAR}
+    </update>
+
+    <!-- 根据SelectDto条件查询列表 -->
+    <select id="selectAllBizTags" resultType="java.lang.String">
+        SELECT biz_tag
+        FROM g2rain_raindrop
+    </select>
+</mapper>

@@ -1,0 +1,9 @@
+#mybatis
+spring:
+  datasource:
+    host: localhost
+    port: 3306
+    database: g2rain_infra
+    username: root
+    password: 1qaZXsw2
+
