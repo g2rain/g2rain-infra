@@ -87,7 +87,8 @@
         <!-- 基础字段值 -->
         #{createTime, jdbcType=TIMESTAMP}, #{updateTime, jdbcType=TIMESTAMP},
         <!-- 业务字段值 -->
-        #{languageCode, jdbcType=VARCHAR}, #{regionCode, jdbcType=VARCHAR}, #{code, jdbcType=VARCHAR}, #{name, jdbcType=VARCHAR}, #{description, jdbcType=VARCHAR},
+        #{languageCode, jdbcType=VARCHAR}, #{regionCode, jdbcType=VARCHAR}, #{code, jdbcType=VARCHAR},
+        #{name, jdbcType=VARCHAR}, #{description, jdbcType=VARCHAR},
         <!-- version字段值（如果存在，设置默认值为0） -->
         0
         )
@@ -112,7 +113,8 @@
             <!-- 基础字段值 -->
             #{item.createTime, jdbcType=TIMESTAMP}, #{item.updateTime, jdbcType=TIMESTAMP},
             <!-- 业务字段值 -->
-            #{item.languageCode, jdbcType=VARCHAR}, #{item.regionCode, jdbcType=VARCHAR}, #{item.code, jdbcType=VARCHAR}, #{item.name, jdbcType=VARCHAR}, #{item.description, jdbcType=VARCHAR},
+            #{item.languageCode, jdbcType=VARCHAR}, #{item.regionCode, jdbcType=VARCHAR},
+            #{item.code, jdbcType=VARCHAR}, #{item.name, jdbcType=VARCHAR}, #{item.description, jdbcType=VARCHAR},
             <!-- version字段值（如果存在，设置默认值为0） -->
             0
             )

@@ -13,6 +13,7 @@ import com.g2rain.infra.vo.DictionaryItemVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.Resource;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,7 +59,7 @@ public class DictionaryItemController implements DictionaryItemApi {
      */
     @PostMapping("/save")
     @Operation(summary = "新增或更新字典明细", description = "新增或更新字典明细信息")
-    public Result<Long> save(@RequestBody DictionaryItemDto dto) {
+    public Result<Long> save(@RequestBody @Validated DictionaryItemDto dto) {
         return Result.success(dictionaryItemService.save(dto));
     }
 
@@ -73,5 +74,4 @@ public class DictionaryItemController implements DictionaryItemApi {
     public Result<Integer> delete(@Parameter(description = "字典明细标识") @PathVariable Long id) {
         return Result.success(dictionaryItemService.delete(id));
     }
-
 }

@@ -2,6 +2,8 @@ package com.g2rain.infra.dto;
 
 import com.g2rain.common.model.BaseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,19 +26,22 @@ public class G2rainRaindropDto extends BaseDto {
     /**
      * 业务标识,每个业务对应一行
      */
-    @Schema(description = "业务标识,每个业务对应一行")
+    @NotBlank
+    @Schema(description = "业务标识,每个业务对应一行", requiredMode = Schema.RequiredMode.REQUIRED)
     private String bizTag;
 
     /**
      * 当前分配到的最大 ID
      */
-    @Schema(description = "当前分配到的最大 ID")
+    @NotNull
+    @Schema(description = "当前分配到的最大 ID", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long maxId;
 
     /**
      * 分配步长,用于批量预分配ID
      */
-    @Schema(description = "分配步长,用于批量预分配 ID")
+    @NotNull
+    @Schema(description = "分配步长,用于批量预分配 ID", requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer step;
 
     /**

@@ -1,12 +1,13 @@
 package com.g2rain.infra.service.impl;
 
+import com.g2rain.common.exception.BusinessException;
 import com.g2rain.common.exception.SystemErrorCode;
 import com.g2rain.common.id.IdGenerator;
 import com.g2rain.common.model.PageData;
 import com.g2rain.common.model.PageSelectListDto;
 import com.g2rain.common.utils.Asserts;
+import com.g2rain.common.utils.Collections;
 import com.g2rain.common.utils.Moments;
-import com.g2rain.common.utils.Strings;
 import com.g2rain.infra.converter.DictionaryItemConverter;
 import com.g2rain.infra.dao.DictionaryItemDao;
 import com.g2rain.infra.dao.DictionaryUsageDao;
@@ -61,9 +62,6 @@ public class DictionaryItemServiceImpl implements DictionaryItemService {
 
     @Override
     public List<DictionaryItemVo> selectList(DictionaryItemSelectDto selectDto) {
-        if (!resolveDictionaryUsageId(selectDto)) {
-            return List.of();
-        }
         List<DictionaryItemVo> result = dictionaryItemDao.selectList(selectDto)
             .stream()
             .map(DictionaryItemConverter.INSTANCE::po2vo)
@@ -74,9 +72,6 @@ public class DictionaryItemServiceImpl implements DictionaryItemService {
 
     @Override
     public PageData<DictionaryItemVo> selectPage(PageSelectListDto<DictionaryItemSelectDto> selectDto) {
-        if (!resolveDictionaryUsageId(selectDto.getQuery())) {
-            return PageData.of(selectDto.getPageNum(), selectDto.getPageSize(), 0L, List.of());
-        }
         Page<DictionaryItemPo> page = PageContext.of(selectDto.getPageNum(), selectDto.getPageSize(), () ->
             dictionaryItemDao.selectList(selectDto.getQuery())
         );
@@ -91,7 +86,22 @@ public class DictionaryItemServiceImpl implements DictionaryItemService {
 
     @Override
     public Long save(DictionaryItemDto dto) {
-        // 转换DTO为PO
+        // 校验字典用途编码是否存在
+        DictionaryUsageSelectDto selectDto = new DictionaryUsageSelectDto();
+        selectDto.setUsageCode(dto.getUsageCode());
+        List<DictionaryUsagePo> dictionaryUsages = dictionaryUsageDao.selectList(selectDto);
+        Asserts.greaterThan(dictionaryUsages.size(), 0, SystemErrorCode.PARAM_VAL_INVALID, "usageCode");
+
+        // 校验字典项是否重复
+        DictionaryItemSelectDto itemSelectDto = new DictionaryItemSelectDto();
+        itemSelectDto.setUsageCode(dto.getUsageCode());
+        itemSelectDto.setCode(dto.getCode());
+        List<DictionaryItemPo> items = dictionaryItemDao.selectList(itemSelectDto);
+        if (items.stream().anyMatch(o -> !Objects.equals(o.getId(), dto.getId()))) {
+            throw new BusinessException(SystemErrorCode.DATA_EXISTS);
+        }
+
+        // 转换 DTO 为 PO
         DictionaryItemPo entity = DictionaryItemConverter.INSTANCE.dto2po(dto);
 
         // 判断是新增还是更新
@@ -126,40 +136,47 @@ public class DictionaryItemServiceImpl implements DictionaryItemService {
     @Override
     public List<DictionaryItemTreeVo> selectTree(DictionaryItemTreeSelectDto selectDto) {
         DictionaryItemSelectDto query = new DictionaryItemSelectDto();
-        query.setDictionaryUsageId(selectDto.getDictionaryUsageId());
+        query.setUsageCode(selectDto.getUsageCode());
         List<DictionaryItemPo> poList = dictionaryItemDao.selectList(query);
         if (poList.isEmpty()) {
             return List.of();
         }
+
         List<DictionaryItemTreeVo> nodes = poList.stream()
             .map(DictionaryItemConverter.INSTANCE::po2treeVo)
             .toList();
+
         // id -> 节点，用于 O(1) 查找父节点
         Map<Long, DictionaryItemTreeVo> byId = HashMap.newHashMap(nodes.size());
         for (DictionaryItemTreeVo node : nodes) {
             byId.put(node.getId(), node);
         }
+
         List<DictionaryItemTreeVo> roots = new ArrayList<>();
         for (DictionaryItemTreeVo node : nodes) {
             Long parentId = node.getParentId();
-            if (parentId == null || parentId == 0L) {
+            if (Objects.isNull(parentId) || parentId == 0L) {
                 node.setParentName(null);
                 roots.add(node);
                 continue;
             }
+
             DictionaryItemTreeVo parent = byId.get(parentId);
-            if (parent == null) {
+            if (Objects.isNull(parent)) {
                 // 父节点未返回（已删或数据不一致）：与根同级返回，便于排查
                 node.setParentName(null);
                 roots.add(node);
                 continue;
             }
+
             node.setParentName(parent.getName());
-            if (parent.getChildren() == null) {
+            if (Objects.isNull(parent.getChildren())) {
                 parent.setChildren(new ArrayList<>());
             }
+
             parent.getChildren().add(node);
         }
+
         // 每一层：sortIndex 升序，相同则按 id；null sortIndex 排在后面
         Comparator<DictionaryItemTreeVo> order = Comparator
             .comparing(DictionaryItemTreeVo::getSortIndex, Comparator.nullsLast(Comparator.naturalOrder()))
@@ -168,40 +185,47 @@ public class DictionaryItemServiceImpl implements DictionaryItemService {
         return roots;
     }
 
-    /** 对当前层及所有子层按同一比较器排序（深度优先）。 */
+    /**
+     * 对当前层及所有子层按同一比较器排序（深度优先）。
+     */
     private void sortTreeLevel(List<DictionaryItemTreeVo> level, Comparator<DictionaryItemTreeVo> order) {
-        if (level == null || level.isEmpty()) {
+        if (Collections.isEmpty(level)) {
             return;
         }
+
         level.sort(order);
         for (DictionaryItemTreeVo node : level) {
-            if (node.getChildren() != null && !node.getChildren().isEmpty()) {
+            if (Objects.nonNull(node.getChildren()) && !node.getChildren().isEmpty()) {
                 sortTreeLevel(node.getChildren(), order);
             }
         }
     }
 
     private void fillParentName(List<? extends DictionaryItemVo> list) {
-        if (list == null || list.isEmpty()) {
+        if (Collections.isEmpty(list)) {
             return;
         }
+
         Map<Long, String> nameById = HashMap.newHashMap(list.size());
         for (DictionaryItemVo item : list) {
-            if (item.getId() != null) {
+            if (Objects.nonNull(item.getId())) {
                 nameById.put(item.getId(), item.getName());
             }
         }
+
         Set<Long> missingParentIds = new HashSet<>();
         for (DictionaryItemVo item : list) {
             Long parentId = item.getParentId();
-            if (parentId == null || parentId == 0L) {
+            if (Objects.isNull(parentId) || parentId == 0L) {
                 item.setParentName(null);
                 continue;
             }
+
             if (!nameById.containsKey(parentId)) {
                 missingParentIds.add(parentId);
             }
         }
+
         if (!missingParentIds.isEmpty()) {
             DictionaryItemSelectDto parentQuery = new DictionaryItemSelectDto();
             parentQuery.setIds(missingParentIds);
@@ -209,34 +233,20 @@ public class DictionaryItemServiceImpl implements DictionaryItemService {
             for (DictionaryItemPo parent : parentList) {
                 nameById.put(parent.getId(), parent.getName());
             }
+
             for (Long missingParentId : missingParentIds) {
                 nameById.putIfAbsent(missingParentId, null);
             }
         }
+
         for (DictionaryItemVo item : list) {
             Long parentId = item.getParentId();
-            if (parentId == null || parentId == 0L) {
+            if (Objects.isNull(parentId) || parentId == 0L) {
                 continue;
             }
+
             String parentName = nameById.get(parentId);
             item.setParentName(parentName);
         }
-    }
-
-    private boolean resolveDictionaryUsageId(DictionaryItemSelectDto selectDto) {
-        if (selectDto == null || Strings.isBlank(selectDto.getUsageCode())) {
-            return true;
-        }
-        if (selectDto.getDictionaryUsageId() != null && selectDto.getDictionaryUsageId() != 0L) {
-            return true;
-        }
-        DictionaryUsageSelectDto usageQuery = new DictionaryUsageSelectDto();
-        usageQuery.setUsageCode(selectDto.getUsageCode());
-        List<DictionaryUsagePo> usageList = dictionaryUsageDao.selectList(usageQuery);
-        if (usageList.isEmpty()) {
-            return false;
-        }
-        selectDto.setDictionaryUsageId(usageList.getFirst().getId());
-        return true;
     }
 }

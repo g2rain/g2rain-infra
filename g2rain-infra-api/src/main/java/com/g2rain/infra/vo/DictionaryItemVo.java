@@ -36,10 +36,10 @@ public class DictionaryItemVo extends BaseVo {
     private String parentName;
 
     /**
-     * 字典用途主键标识
+     * 字典用途编码
      */
-    @Schema(description = "字典用途主键标识")
-    private Long dictionaryUsageId;
+    @Schema(description = "字典用途编码")
+    private String usageCode;
 
     /**
      * 字典项编码,用于系统标识

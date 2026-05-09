@@ -21,9 +21,9 @@ import lombok.Setter;
 public class I18nMessagePo extends BasePo {
 
     /**
-     * 用途标识
+     * 国际化用途编码
      */
-    private Long messageUsageId;
+    private String messageUsageCode;
 
     /**
      * 语言编码,如 zh

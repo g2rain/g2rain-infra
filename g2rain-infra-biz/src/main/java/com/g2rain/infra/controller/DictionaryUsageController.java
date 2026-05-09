@@ -11,6 +11,7 @@ import com.g2rain.infra.vo.DictionaryUsageVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.Resource;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,7 +52,7 @@ public class DictionaryUsageController implements DictionaryUsageApi {
      */
     @PostMapping("/save")
     @Operation(summary = "新增或更新字典用途", description = "新增或更新字典用途信息")
-    public Result<Long> save(@RequestBody DictionaryUsageDto dto) {
+    public Result<Long> save(@RequestBody @Validated DictionaryUsageDto dto) {
         return Result.success(dictionaryUsageService.save(dto));
     }
 

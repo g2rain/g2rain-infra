@@ -23,8 +23,8 @@ public interface DictionaryItemService {
     /**
      * 根据条件查询列表
      *
-     * @param selectDto 查询条件DTO
-     * @return VO对象列表
+     * @param selectDto 查询条件 DTO
+     * @return VO 对象列表
      */
     List<DictionaryItemVo> selectList(DictionaryItemSelectDto selectDto);
 
@@ -32,7 +32,7 @@ public interface DictionaryItemService {
      * 根据条件分页查询
      *
      * @param selectDto 查询条件DTO（包含分页参数）
-     * @return 分页VO数据
+     * @return 分页 VO 数据
      */
     PageData<DictionaryItemVo> selectPage(PageSelectListDto<DictionaryItemSelectDto> selectDto);
 
@@ -45,9 +45,9 @@ public interface DictionaryItemService {
     Long save(DictionaryItemDto dto);
 
     /**
-     * 根据ID删除数据
+     * 根据 ID 删除数据
      *
-     * @param id 主键ID
+     * @param id 主键 ID
      * @return 操作结果（影响行数）
      */
     int delete(Long id);
@@ -55,7 +55,7 @@ public interface DictionaryItemService {
     /**
      * 查询树形字典
      *
-     * @param selectDto 查询条件DTO
+     * @param selectDto 查询条件 DTO
      * @return 字典树形结构
      */
     List<DictionaryItemTreeVo> selectTree(DictionaryItemTreeSelectDto selectDto);

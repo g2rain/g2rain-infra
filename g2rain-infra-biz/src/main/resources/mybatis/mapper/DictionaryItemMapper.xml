@@ -12,7 +12,7 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <!-- 业务字段（其他自定义字段） -->
         <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
-        <result column="dictionary_usage_id" property="dictionaryUsageId" jdbcType="BIGINT"/>
+        <result column="usage_code" property="usageCode" jdbcType="VARCHAR"/>
         <result column="code" property="code" jdbcType="VARCHAR"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
         <result column="description" property="description" jdbcType="VARCHAR"/>
@@ -52,8 +52,8 @@
                         parent_id
                         <include refid="directionClause"/>
                     </when>
-                    <when test="item.column == 'dictionaryUsageId'">
-                        dictionary_usage_id
+                    <when test="item.column == 'usageCode'">
+                        usage_code
                         <include refid="directionClause"/>
                     </when>
                     <when test="item.column == 'code'">
@@ -77,174 +77,8 @@
         </trim>
     </sql>
 
-    <!-- 插入单条记录 -->
-    <insert id="insert" parameterType="com.g2rain.infra.dao.po.DictionaryItemPo">
-        INSERT INTO dictionary_item (
-        <!-- 主键字段（自增主键不包含在插入语句中） -->
-        id,
-        <!-- 基础字段 -->
-        create_time, update_time,
-        <!-- 业务字段 -->
-        parent_id, dictionary_usage_id, code, name, description, sort_index,
-        <!-- deleteFlag字段（如果存在） -->
-        delete_flag,
-        <!-- version字段（如果存在） -->
-        version
-        ) VALUES (
-        <!-- 主键值（自增主键不包含） -->
-        #{id, jdbcType=BIGINT},
-        <!-- 基础字段值 -->
-        #{createTime, jdbcType=TIMESTAMP}, #{updateTime, jdbcType=TIMESTAMP},
-        <!-- 业务字段值 -->
-        #{parentId, jdbcType=BIGINT}, #{dictionaryUsageId, jdbcType=BIGINT}, #{code, jdbcType=VARCHAR}, #{name, jdbcType=VARCHAR}, #{description, jdbcType=VARCHAR}, #{sortIndex, jdbcType=INTEGER},
-        <!-- deleteFlag字段值（如果存在，设置默认值为0） -->
-        0,
-        <!-- version字段值（如果存在，设置默认值为0） -->
-        0
-        )
-    </insert>
-
-    <!-- 批量插入记录 -->
-    <insert id="insertMultiple" parameterType="java.util.List">
-        INSERT INTO dictionary_item (
-        <!-- 主键字段（自增主键不包含） -->
-        id,
-        <!-- 基础字段 -->
-        create_time, update_time,
-        <!-- 业务字段 -->
-        parent_id, dictionary_usage_id, code, name, description, sort_index,
-        <!-- deleteFlag字段（如果存在） -->
-        delete_flag,
-        <!-- version字段（如果存在） -->
-        version
-        ) VALUES
-        <foreach collection="list" item="item" separator=",">
-            (
-            <!-- 主键值（自增主键不包含） -->
-            #{item.id, jdbcType=BIGINT},
-            <!-- 基础字段值 -->
-            #{item.createTime, jdbcType=TIMESTAMP}, #{item.updateTime, jdbcType=TIMESTAMP},
-            <!-- 业务字段值 -->
-            #{item.parentId, jdbcType=BIGINT}, #{item.dictionaryUsageId, jdbcType=BIGINT}, #{item.code, jdbcType=VARCHAR}, #{item.name, jdbcType=VARCHAR}, #{item.description, jdbcType=VARCHAR}, #{item.sortIndex, jdbcType=INTEGER},
-            <!-- deleteFlag字段值（如果存在，设置默认值为0） -->
-            0,
-            <!-- version字段值（如果存在，设置默认值为0） -->
-            0
-            )
-        </foreach>
-    </insert>
-
-    <!-- 根据ID更新记录（包含基础字段和业务字段） -->
-    <update id="update" parameterType="com.g2rain.infra.dao.po.DictionaryItemPo">
-        UPDATE dictionary_item
-        <set>
-            <!-- 基础字段更新（排除version，version单独处理） -->
-            <if test="updateTime != null">
-                update_time = #{updateTime, jdbcType=TIMESTAMP},
-            </if>
-            <!-- 业务字段更新 -->
-            <if test="parentId != null">
-                parent_id = #{parentId, jdbcType=BIGINT},
-            </if>
-            <if test="dictionaryUsageId != null">
-                dictionary_usage_id = #{dictionaryUsageId, jdbcType=BIGINT},
-            </if>
-            <if test="code != null">
-                code = #{code, jdbcType=VARCHAR},
-            </if>
-            <if test="name != null">
-                name = #{name, jdbcType=VARCHAR},
-            </if>
-            <if test="description != null">
-                description = #{description, jdbcType=VARCHAR},
-            </if>
-            <if test="sortIndex != null">
-                sort_index = #{sortIndex, jdbcType=INTEGER},
-            </if>
-            <!-- version字段更新（如果存在，版本号自增） -->
-            version = version + 1
-        </set>
-        WHERE id = #{id, jdbcType=BIGINT}
-    </update>
-
-    <!-- 根据ID和Version更新记录（乐观锁更新，包含基础字段和业务字段） -->
-    <update id="updateByVersion" parameterType="com.g2rain.infra.dao.po.DictionaryItemPo">
-        UPDATE dictionary_item
-        <set>
-            <!-- 基础字段更新（排除version，version单独处理） -->
-            <if test="updateTime != null">
-                update_time = #{updateTime, jdbcType=TIMESTAMP},
-            </if>
-            <!-- 业务字段更新 -->
-            <if test="parentId != null">
-                parent_id = #{parentId, jdbcType=BIGINT},
-            </if>
-            <if test="dictionaryUsageId != null">
-                dictionary_usage_id = #{dictionaryUsageId, jdbcType=BIGINT},
-            </if>
-            <if test="code != null">
-                code = #{code, jdbcType=VARCHAR},
-            </if>
-            <if test="name != null">
-                name = #{name, jdbcType=VARCHAR},
-            </if>
-            <if test="description != null">
-                description = #{description, jdbcType=VARCHAR},
-            </if>
-            <if test="sortIndex != null">
-                sort_index = #{sortIndex, jdbcType=INTEGER},
-            </if>
-            <!-- version字段更新（乐观锁版本号自增） -->
-            version = version + 1
-        </set>
-        WHERE id = #{id, jdbcType=BIGINT}
-        AND version = #{version, jdbcType=INTEGER}
-    </update>
-
-    <!-- 根据ID删除记录（逻辑删除：将delete_flag设置为true） -->
-    <update id="delete" parameterType="Long">
-        UPDATE dictionary_item
-        <set>
-            delete_flag = 1
-        </set>
-        WHERE id = #{id, jdbcType=BIGINT}
-        <!-- 只删除未删除的记录 -->
-        AND (delete_flag = 0 OR delete_flag IS NULL)
-    </update>
-
-    <!-- 根据ID查询记录（查询所有字段） -->
-    <select id="selectById" parameterType="Long" resultMap="BaseResultMap">
-        SELECT
-        <!-- 主键字段 -->
-        id,
-        <!-- 基础字段 -->
-        create_time, update_time,
-        <!-- 业务字段 -->
-        parent_id, dictionary_usage_id, code, name, description, sort_index,
-        <!-- deleteFlag字段（如果存在） -->
-        delete_flag,
-        <!-- version字段（如果存在） -->
-        version
-        FROM dictionary_item
-        WHERE id = #{id, jdbcType=BIGINT}
-        <!-- 过滤已删除的记录 -->
-        AND (delete_flag = 0 OR delete_flag IS NULL)
-    </select>
-
-    <!-- 根据SelectDto条件查询列表 -->
-    <select id="selectList" parameterType="com.g2rain.infra.dto.DictionaryItemSelectDto" resultMap="BaseResultMap">
-        SELECT
-        <!-- 主键字段 -->
-        id,
-        <!-- 基础字段 -->
-        create_time, update_time,
-        <!-- 业务字段 -->
-        parent_id, dictionary_usage_id, code, name, description, sort_index,
-        <!-- deleteFlag字段（如果存在） -->
-        delete_flag,
-        <!-- version字段（如果存在） -->
-        version
-        FROM dictionary_item
+    <!-- 公共的查询条件 -->
+    <sql id="commonWhereClause">
         <where>
             <!-- 主键筛选 -->
             <if test="id != null">
@@ -285,8 +119,14 @@
             <if test="parentId != null">
                 AND parent_id = #{parentId, jdbcType=BIGINT}
             </if>
-            <if test="dictionaryUsageId != null">
-                AND dictionary_usage_id = #{dictionaryUsageId, jdbcType=BIGINT}
+            <if test="usageCode != null">
+                AND usage_code = #{usageCode, jdbcType=VARCHAR}
+            </if>
+            <if test="usageCodes != null and usageCodes.size() > 0">
+                AND usage_code IN
+                <foreach collection="usageCodes" item="item" open="(" separator="," close=")">
+                    #{item, jdbcType=VARCHAR}
+                </foreach>
             </if>
             <if test="code != null">
                 AND code = #{code, jdbcType=VARCHAR}
@@ -303,6 +143,182 @@
             <!-- 过滤已删除的记录 -->
             AND (delete_flag = 0 OR delete_flag IS NULL)
         </where>
+    </sql>
+
+    <!-- 插入单条记录 -->
+    <insert id="insert" parameterType="com.g2rain.infra.dao.po.DictionaryItemPo">
+        INSERT INTO dictionary_item (
+        <!-- 主键字段（自增主键不包含在插入语句中） -->
+        id,
+        <!-- 基础字段 -->
+        create_time, update_time,
+        <!-- 业务字段 -->
+        parent_id, usage_code, code, name, description, sort_index,
+        <!-- deleteFlag字段（如果存在） -->
+        delete_flag,
+        <!-- version字段（如果存在） -->
+        version
+        ) VALUES (
+        <!-- 主键值（自增主键不包含） -->
+        #{id, jdbcType=BIGINT},
+        <!-- 基础字段值 -->
+        #{createTime, jdbcType=TIMESTAMP}, #{updateTime, jdbcType=TIMESTAMP},
+        <!-- 业务字段值 -->
+        #{parentId, jdbcType=BIGINT}, #{usageCode, jdbcType=VARCHAR}, #{code, jdbcType=VARCHAR}, #{name, jdbcType=VARCHAR}, #{description, jdbcType=VARCHAR}, #{sortIndex, jdbcType=INTEGER},
+        <!-- deleteFlag字段值（如果存在，设置默认值为0） -->
+        0,
+        <!-- version字段值（如果存在，设置默认值为0） -->
+        0
+        )
+    </insert>
+
+    <!-- 批量插入记录 -->
+    <insert id="insertMultiple" parameterType="java.util.List">
+        INSERT INTO dictionary_item (
+        <!-- 主键字段（自增主键不包含） -->
+        id,
+        <!-- 基础字段 -->
+        create_time, update_time,
+        <!-- 业务字段 -->
+        parent_id, usage_code, code, name, description, sort_index,
+        <!-- deleteFlag字段（如果存在） -->
+        delete_flag,
+        <!-- version字段（如果存在） -->
+        version
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            <!-- 主键值（自增主键不包含） -->
+            #{item.id, jdbcType=BIGINT},
+            <!-- 基础字段值 -->
+            #{item.createTime, jdbcType=TIMESTAMP}, #{item.updateTime, jdbcType=TIMESTAMP},
+            <!-- 业务字段值 -->
+            #{item.parentId, jdbcType=BIGINT}, #{item.usageCode, jdbcType=VARCHAR}, #{item.code, jdbcType=VARCHAR}, #{item.name, jdbcType=VARCHAR}, #{item.description, jdbcType=VARCHAR}, #{item.sortIndex, jdbcType=INTEGER},
+            <!-- deleteFlag字段值（如果存在，设置默认值为0） -->
+            0,
+            <!-- version字段值（如果存在，设置默认值为0） -->
+            0
+            )
+        </foreach>
+    </insert>
+
+    <!-- 根据ID更新记录（包含基础字段和业务字段） -->
+    <update id="update" parameterType="com.g2rain.infra.dao.po.DictionaryItemPo">
+        UPDATE dictionary_item
+        <set>
+            <!-- 基础字段更新（排除version，version单独处理） -->
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+            <!-- 业务字段更新 -->
+            <if test="parentId != null">
+                parent_id = #{parentId, jdbcType=BIGINT},
+            </if>
+            <if test="usageCode != null">
+                usage_code = #{usageCode, jdbcType=VARCHAR},
+            </if>
+            <if test="code != null">
+                code = #{code, jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name, jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description, jdbcType=VARCHAR},
+            </if>
+            <if test="sortIndex != null">
+                sort_index = #{sortIndex, jdbcType=INTEGER},
+            </if>
+            <!-- version字段更新（如果存在，版本号自增） -->
+            version = version + 1
+        </set>
+        WHERE id = #{id, jdbcType=BIGINT}
+    </update>
+
+    <!-- 根据ID和Version更新记录（乐观锁更新，包含基础字段和业务字段） -->
+    <update id="updateByVersion" parameterType="com.g2rain.infra.dao.po.DictionaryItemPo">
+        UPDATE dictionary_item
+        <set>
+            <!-- 基础字段更新（排除version，version单独处理） -->
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+            <!-- 业务字段更新 -->
+            <if test="parentId != null">
+                parent_id = #{parentId, jdbcType=BIGINT},
+            </if>
+            <if test="usageCode != null">
+                usage_code = #{usageCode, jdbcType=VARCHAR},
+            </if>
+            <if test="code != null">
+                code = #{code, jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name, jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description, jdbcType=VARCHAR},
+            </if>
+            <if test="sortIndex != null">
+                sort_index = #{sortIndex, jdbcType=INTEGER},
+            </if>
+            <!-- version字段更新（乐观锁版本号自增） -->
+            version = version + 1
+        </set>
+        WHERE id = #{id, jdbcType=BIGINT}
+        AND version = #{version, jdbcType=INTEGER}
+    </update>
+
+    <!-- 根据ID删除记录（逻辑删除：将delete_flag设置为true） -->
+    <update id="delete" parameterType="Long">
+        UPDATE dictionary_item
+        <set>
+            delete_flag = 1
+        </set>
+        WHERE id = #{id, jdbcType=BIGINT}
+        <!-- 只删除未删除的记录 -->
+        AND (delete_flag = 0 OR delete_flag IS NULL)
+    </update>
+
+    <!-- 根据ID查询记录（查询所有字段） -->
+    <select id="selectById" parameterType="Long" resultMap="BaseResultMap">
+        SELECT
+        <!-- 主键字段 -->
+        id,
+        <!-- 基础字段 -->
+        create_time, update_time,
+        <!-- 业务字段 -->
+        parent_id, usage_code, code, name, description, sort_index,
+        <!-- deleteFlag字段（如果存在） -->
+        delete_flag,
+        <!-- version字段（如果存在） -->
+        version
+        FROM dictionary_item
+        WHERE id = #{id, jdbcType=BIGINT}
+        <!-- 过滤已删除的记录 -->
+        AND (delete_flag = 0 OR delete_flag IS NULL)
+    </select>
+
+    <!-- 根据 SelectDto 条件查询列表 -->
+    <select id="selectList" parameterType="com.g2rain.infra.dto.DictionaryItemSelectDto" resultMap="BaseResultMap">
+        SELECT
+        <!-- 主键字段 -->
+        id,
+        <!-- 基础字段 -->
+        create_time, update_time,
+        <!-- 业务字段 -->
+        parent_id, usage_code, code, name, description, sort_index,
+        <!-- deleteFlag字段（如果存在） -->
+        delete_flag,
+        <!-- version字段（如果存在） -->
+        version
+        FROM dictionary_item
+        <include refid="commonWhereClause"/>
         <include refid="dynamicOrderBy"/>
+    </select>
+
+    <select id="checkDictItemExists" parameterType="com.g2rain.infra.dto.DictionaryItemSelectDto" resultType="Long">
+        SELECT count(1) TOTAL FROM dictionary_item
+        <include refid="commonWhereClause"/>
     </select>
 </mapper>

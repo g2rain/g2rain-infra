@@ -11,7 +11,7 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <!-- 业务字段（其他自定义字段） -->
-        <result column="message_usage_id" property="messageUsageId" jdbcType="BIGINT"/>
+        <result column="message_usage_code" property="messageUsageCode" jdbcType="VARCHAR"/>
         <result column="language_code" property="languageCode" jdbcType="VARCHAR"/>
         <result column="region_code" property="regionCode" jdbcType="VARCHAR"/>
         <result column="message_code" property="messageCode" jdbcType="VARCHAR"/>
@@ -46,8 +46,8 @@
                         update_time
                         <include refid="directionClause"/>
                     </when>
-                    <when test="item.column == 'messageUsageId'">
-                        message_usage_id
+                    <when test="item.column == 'messageUsageCode'">
+                        message_usage_code
                         <include refid="directionClause"/>
                     </when>
                     <when test="item.column == 'languageCode'">
@@ -83,7 +83,7 @@
         <!-- 基础字段 -->
         create_time, update_time,
         <!-- 业务字段 -->
-        message_usage_id, language_code, region_code, message_code, message_text, extend_field,
+        message_usage_code, language_code, region_code, message_code, message_text, extend_field,
         <!-- version字段（如果存在） -->
         version
         ) VALUES (
@@ -92,7 +92,7 @@
         <!-- 基础字段值 -->
         #{createTime, jdbcType=TIMESTAMP}, #{updateTime, jdbcType=TIMESTAMP},
         <!-- 业务字段值 -->
-        #{messageUsageId, jdbcType=BIGINT}, #{languageCode, jdbcType=VARCHAR}, #{regionCode, jdbcType=VARCHAR}, #{messageCode, jdbcType=VARCHAR}, #{messageText, jdbcType=LONGVARCHAR}, #{extendField, jdbcType=LONGVARCHAR},
+        #{messageUsageCode, jdbcType=VARCHAR}, #{languageCode, jdbcType=VARCHAR}, #{regionCode, jdbcType=VARCHAR}, #{messageCode, jdbcType=VARCHAR}, #{messageText, jdbcType=LONGVARCHAR}, #{extendField, jdbcType=LONGVARCHAR},
         <!-- version字段值（如果存在，设置默认值为0） -->
         0
         )
@@ -106,7 +106,7 @@
         <!-- 基础字段 -->
         create_time, update_time,
         <!-- 业务字段 -->
-        message_usage_id, language_code, region_code, message_code, message_text, extend_field,
+        message_usage_code, language_code, region_code, message_code, message_text, extend_field,
         <!-- version字段（如果存在） -->
         version
         ) VALUES
@@ -117,7 +117,7 @@
             <!-- 基础字段值 -->
             #{item.createTime, jdbcType=TIMESTAMP}, #{item.updateTime, jdbcType=TIMESTAMP},
             <!-- 业务字段值 -->
-            #{item.messageUsageId, jdbcType=BIGINT}, #{item.languageCode, jdbcType=VARCHAR}, #{item.regionCode, jdbcType=VARCHAR}, #{item.messageCode, jdbcType=VARCHAR}, #{item.messageText, jdbcType=LONGVARCHAR}, #{item.extendField, jdbcType=LONGVARCHAR},
+            #{item.messageUsageCode, jdbcType=VARCHAR}, #{item.languageCode, jdbcType=VARCHAR}, #{item.regionCode, jdbcType=VARCHAR}, #{item.messageCode, jdbcType=VARCHAR}, #{item.messageText, jdbcType=LONGVARCHAR}, #{item.extendField, jdbcType=LONGVARCHAR},
             <!-- version字段值（如果存在，设置默认值为0） -->
             0
             )
@@ -133,8 +133,8 @@
                 update_time = #{updateTime, jdbcType=TIMESTAMP},
             </if>
             <!-- 业务字段更新 -->
-            <if test="messageUsageId != null">
-                message_usage_id = #{messageUsageId, jdbcType=BIGINT},
+            <if test="messageUsageCode != null">
+                message_usage_code = #{messageUsageCode, jdbcType=VARCHAR},
             </if>
             <if test="languageCode != null">
                 language_code = #{languageCode, jdbcType=VARCHAR},
@@ -166,8 +166,8 @@
                 update_time = #{updateTime, jdbcType=TIMESTAMP},
             </if>
             <!-- 业务字段更新 -->
-            <if test="messageUsageId != null">
-                message_usage_id = #{messageUsageId, jdbcType=BIGINT},
+            <if test="messageUsageCode != null">
+                message_usage_code = #{messageUsageCode, jdbcType=VARCHAR},
             </if>
             <if test="languageCode != null">
                 language_code = #{languageCode, jdbcType=VARCHAR},
@@ -205,14 +205,14 @@
         <!-- 基础字段 -->
         create_time, update_time,
         <!-- 业务字段 -->
-        message_usage_id, language_code, region_code, message_code, message_text, extend_field,
+        message_usage_code, language_code, region_code, message_code, message_text, extend_field,
         <!-- version字段（如果存在） -->
         version
         FROM i18n_message
         WHERE id = #{id, jdbcType=BIGINT}
     </select>
 
-    <!-- 根据SelectDto条件查询列表 -->
+    <!-- 根据 SelectDto 条件查询列表 -->
     <select id="selectList" parameterType="com.g2rain.infra.dto.I18nMessageSelectDto" resultMap="BaseResultMap">
         SELECT
         <!-- 主键字段 -->
@@ -220,7 +220,7 @@
         <!-- 基础字段 -->
         create_time, update_time,
         <!-- 业务字段 -->
-        message_usage_id, language_code, region_code, message_code, message_text, extend_field,
+        message_usage_code, language_code, region_code, message_code, message_text, extend_field,
         <!-- version字段（如果存在） -->
         version
         FROM i18n_message
@@ -261,8 +261,8 @@
                 </if>
             </if>
             <!-- 业务字段筛选 -->
-            <if test="messageUsageId != null">
-                AND message_usage_id = #{messageUsageId, jdbcType=BIGINT}
+            <if test="messageUsageCode != null">
+                AND message_usage_code = #{messageUsageCode, jdbcType=VARCHAR}
             </if>
             <if test="languageCode != null">
                 AND language_code = #{languageCode, jdbcType=VARCHAR}

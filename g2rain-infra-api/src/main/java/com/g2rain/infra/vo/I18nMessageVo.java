@@ -23,16 +23,10 @@ import lombok.Setter;
 public class I18nMessageVo extends BaseVo {
 
     /**
-     * 用途标识
+     * 国际化用途编码
      */
-    @Schema(description = "国际化信息用途标识")
-    private Long messageUsageId;
-
-    /**
-     * 用途名称
-     */
-    @Schema(description = "国际化信息用途名称")
-    private String messageUsageName;
+    @Schema(description = "国际化用途编码")
+    private String messageUsageCode;
 
     /**
      * 语言编码,如 zh
