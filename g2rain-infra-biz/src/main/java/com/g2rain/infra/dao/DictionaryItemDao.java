@@ -32,7 +32,7 @@ public interface DictionaryItemDao {
     int insertMultiple(List<DictionaryItemPo> list);
 
     /**
-     * 根据ID更新记录
+     * 根据 ID 更新记录
      *
      * @param entity 实体对象
      * @return 影响行数
@@ -40,9 +40,9 @@ public interface DictionaryItemDao {
     int update(DictionaryItemPo entity);
 
     /**
-     * 根据ID删除记录
+     * 根据 ID 删除记录
      *
-     * @param id 主键ID
+     * @param id 主键 ID
      * @return 影响行数
      */
     int delete(Long id);
@@ -56,18 +56,26 @@ public interface DictionaryItemDao {
     int updateByVersion(DictionaryItemPo entity);
 
     /**
-     * 根据ID查询记录
+     * 根据 ID 查询记录
      *
-     * @param id 主键ID
+     * @param id 主键 ID
      * @return 实体对象
      */
     DictionaryItemPo selectById(Long id);
 
     /**
-     * 根据查询入参DTO筛选列表
+     * 根据查询入参 DTO 筛选列表
      *
-     * @param selectDto 查询条件DTO
+     * @param selectDto 查询条件 DTO
      * @return 实体对象列表
      */
     List<DictionaryItemPo> selectList(DictionaryItemSelectDto selectDto);
+
+    /**
+     * 检查字典明细是否存在
+     *
+     * @param selectDto 查询条件
+     * @return 字典明细数量
+     */
+    Long checkDictItemExists(DictionaryItemSelectDto selectDto);
 }

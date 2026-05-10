@@ -2,6 +2,8 @@ package com.g2rain.infra.dto;
 
 import com.g2rain.common.model.BaseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,32 +30,36 @@ public class DictionaryItemDto extends BaseDto {
     private Long parentId;
 
     /**
-     * 字典用途主键标识
+     * 字典用途编码
      */
-    @Schema(description = "字典用途主键标识")
-    private Long dictionaryUsageId;
+    @NotBlank
+    @Schema(description = "字典用途编码", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String usageCode;
 
     /**
      * 字典项编码,用于系统标识
      */
-    @Schema(description = "字典项编码,用于系统标识")
+    @NotBlank
+    @Schema(description = "字典项编码,用于系统标识", requiredMode = Schema.RequiredMode.REQUIRED)
     private String code;
 
     /**
      * 字典名称(默认语言)
      */
-    @Schema(description = "字典名称(默认语言)")
+    @NotBlank
+    @Schema(description = "字典名称(默认语言)", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
+
+    /**
+     * 字典排序
+     */
+    @NotNull
+    @Schema(description = "字典排序", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Integer sortIndex;
 
     /**
      * 业务描述
      */
     @Schema(description = "业务描述")
     private String description;
-
-    /**
-     * 字典排序
-     */
-    @Schema(description = "字典排序")
-    private Integer sortIndex;
 }

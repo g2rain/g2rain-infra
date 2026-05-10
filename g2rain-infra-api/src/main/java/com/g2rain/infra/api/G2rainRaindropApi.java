@@ -53,7 +53,7 @@ public interface G2rainRaindropApi {
      * @return {@link Result} 包含生成的 {@link Long} 类型 ID
      */
     @GetMapping(value = "snowflake")
-    @Operation(summary = "获取雪花 ID", description = "使用雪花算法分配全局唯一 ID，适用于分布式场景")
+    @Operation(summary = "获取雪花 ID", hidden = true, description = "使用雪花算法分配全局唯一 ID，适用于分布式场景")
     Result<Long> getSnowflakeId();
 
     /**
@@ -68,6 +68,6 @@ public interface G2rainRaindropApi {
      * @return {@link Result} 包含生成的 {@link Long} 类型业务 ID
      */
     @GetMapping(value = "/business")
-    @Operation(summary = "获取业务 ID", description = "按业务标签分配业务维度 ID，bizTag 为空时使用默认策略")
+    @Operation(summary = "获取业务 ID", hidden = true, description = "按业务标签分配业务维度 ID，bizTag 为空时使用默认策略")
     Result<Long> getBusinessId(@Parameter(description = "可选业务标签，用于区分业务维度") @RequestParam(value = "bizTag", required = false) String bizTag);
 }

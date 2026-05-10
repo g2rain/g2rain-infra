@@ -5,6 +5,7 @@ import com.g2rain.common.model.PageSelectListDto;
 import com.g2rain.infra.dto.I18nMessageDto;
 import com.g2rain.infra.dto.I18nMessageSelectDto;
 import com.g2rain.infra.vo.I18nMessageVo;
+import com.g2rain.infra.vo.I18nMsgUsageVo;
 
 import java.util.List;
 
@@ -19,8 +20,8 @@ public interface I18nMessageService {
     /**
      * 根据条件查询列表
      *
-     * @param selectDto 查询条件DTO
-     * @return VO对象列表
+     * @param selectDto 查询条件 DTO
+     * @return VO 对象列表
      */
     List<I18nMessageVo> selectList(I18nMessageSelectDto selectDto);
 
@@ -28,7 +29,7 @@ public interface I18nMessageService {
      * 根据条件分页查询
      *
      * @param selectDto 查询条件DTO（包含分页参数）
-     * @return 分页VO数据
+     * @return 分页 VO 数据
      */
     PageData<I18nMessageVo> selectPage(PageSelectListDto<I18nMessageSelectDto> selectDto);
 
@@ -41,10 +42,17 @@ public interface I18nMessageService {
     Long save(I18nMessageDto dto);
 
     /**
-     * 根据ID删除数据
+     * 根据 ID 删除数据
      *
-     * @param id 主键ID
+     * @param id 主键 ID
      * @return 操作结果（影响行数）
      */
     int delete(Long id);
+
+    /**
+     * 获取国际化用途集合
+     *
+     * @return 国际化用途集合
+     */
+    List<I18nMsgUsageVo> i18nMessageUsages();
 }

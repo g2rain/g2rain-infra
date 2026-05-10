@@ -1,5 +1,6 @@
 package com.g2rain.infra.service.impl;
 
+import com.g2rain.common.exception.BusinessException;
 import com.g2rain.common.exception.SystemErrorCode;
 import com.g2rain.common.model.PageData;
 import com.g2rain.common.model.PageSelectListDto;
@@ -10,9 +11,11 @@ import com.g2rain.infra.dao.G2rainRaindropDao;
 import com.g2rain.infra.dao.po.G2rainRaindropPo;
 import com.g2rain.infra.dto.G2rainRaindropDto;
 import com.g2rain.infra.dto.G2rainRaindropSelectDto;
+import com.g2rain.infra.enums.InfraErrorCode;
 import com.g2rain.infra.enums.KeysmithType;
 import com.g2rain.infra.service.G2rainRaindropService;
 import com.g2rain.infra.service.Keysmith;
+import com.g2rain.infra.utils.Constants;
 import com.g2rain.infra.vo.G2rainRaindropVo;
 import com.g2rain.mybatis.pagination.PageContext;
 import com.g2rain.mybatis.pagination.model.Page;
@@ -71,7 +74,14 @@ public class G2rainRaindropServiceImpl implements G2rainRaindropService {
 
     @Override
     public Long save(G2rainRaindropDto dto) {
-        // 转换DTO为PO
+        G2rainRaindropSelectDto selectDto = new G2rainRaindropSelectDto();
+        selectDto.setBizTag(dto.getBizTag());
+        List<G2rainRaindropPo> rainRaindrops = g2rainRaindropDao.selectList(selectDto);
+        if (rainRaindrops.stream().anyMatch(o -> !Objects.equals(o.getId(), dto.getId()))) {
+            throw new BusinessException(SystemErrorCode.DATA_EXISTS);
+        }
+
+        // 转换 DTO 为 PO
         G2rainRaindropPo entity = G2rainRaindropConverter.INSTANCE.dto2po(dto);
 
         // 判断是新增还是更新
@@ -94,11 +104,23 @@ public class G2rainRaindropServiceImpl implements G2rainRaindropService {
 
     @Override
     public int delete(Long id) {
+        G2rainRaindropPo raindrop = g2rainRaindropDao.selectById(id);
+        Asserts.isTrue(Objects.nonNull(raindrop), SystemErrorCode.PARAM_VAL_INVALID, id);
+        // 禁止删除 业务标签: COMMON 记录
+        Asserts.isTrue(!Constants.DEFAULT_BIZ_TAG.equals(raindrop.getBizTag()),
+            InfraErrorCode.DEL_COMMON_TAG_ILLEGAL
+        );
+
         return g2rainRaindropDao.delete(id);
     }
 
     @Override
     public Long allocate(KeysmithType type, String bizTag) {
         return keysmithHandlers.get(type).allocate(bizTag);
+    }
+
+    @Override
+    public List<String> bizTagDict() {
+        return g2rainRaindropDao.selectAllBizTags();
     }
 }

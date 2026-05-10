@@ -26,9 +26,9 @@ public class DictionaryItemPo extends BasePo {
     private Long parentId;
 
     /**
-     * 字典用途主键标识
+     * 字典用途编码
      */
-    private Long dictionaryUsageId;
+    private String usageCode;
 
     /**
      * 字典项编码,用于系统标识

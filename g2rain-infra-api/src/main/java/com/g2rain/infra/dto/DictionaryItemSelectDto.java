@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 
 /**
  * 字典明细表查询入参DTO
@@ -29,16 +31,16 @@ public class DictionaryItemSelectDto extends BaseSelectListDto {
     private Long parentId;
 
     /**
-     * 字典用途主键标识
-     */
-    @Schema(description = "字典用途主键标识")
-    private Long dictionaryUsageId;
-
-    /**
      * 字典用途代码
      */
     @Schema(description = "字典用途代码")
     private String usageCode;
+
+    /**
+     * 字典用途代码集合
+     */
+    @Schema(description = "字典用途代码集合")
+    private Set<String> usageCodes;
 
     /**
      * 字典项编码,用于系统标识

@@ -23,10 +23,10 @@ import lombok.Setter;
 public class I18nMessageSelectDto extends BaseSelectListDto {
 
     /**
-     * 用途标识
+     * 国际化用途编码
      */
-    @Schema(description = "国际化信息用途标识")
-    private Long messageUsageId;
+    @Schema(description = "国际化用途编码")
+    private String messageUsageCode;
 
     /**
      * 语言编码,如 zh
@@ -43,7 +43,7 @@ public class I18nMessageSelectDto extends BaseSelectListDto {
     /**
      * 国际化消息编码(唯一)
      */
-    @Schema(description = "国际化消息编码(唯一)")
+    @Schema(description = "国际化消息编码")
     private String messageCode;
 
     /**

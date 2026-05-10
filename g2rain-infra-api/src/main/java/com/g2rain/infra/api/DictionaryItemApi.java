@@ -46,7 +46,7 @@ public interface DictionaryItemApi {
      /**
      * 查询树形字典
      *
-     * @param selectDto 查询条件DTO
+     * @param selectDto 查询条件 DTO
      * @return 字典树形结构
      */
     @GetMapping("/tree")
