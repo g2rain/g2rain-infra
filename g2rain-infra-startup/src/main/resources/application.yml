@@ -71,3 +71,7 @@ management:
         include:
           - health
           - info
+
+g2rain:
+  springdoc:
+    description: 基础支撑接口文档
