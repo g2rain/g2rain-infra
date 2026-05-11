@@ -41,6 +41,8 @@ public interface LocaleSettingConverter {
      * 忽略 version 字段
      */
     @Mapping(target = "version", ignore = true)
+    @Mapping(target = "languageCode", ignore = true)
+    @Mapping(target = "regionCode", ignore = true)
     @Mapping(target = "createTime", source = "createTime", qualifiedByName = "stringToLocalDateTime")
     @Mapping(target = "updateTime", source = "updateTime", qualifiedByName = "stringToLocalDateTime")
     LocaleSettingPo dto2po(LocaleSettingDto dto);
