@@ -47,7 +47,7 @@
         <g2rain.stream.redis.version>1.0.0</g2rain.stream.redis.version>
         <g2rain.data.redis.version>1.0.0</g2rain.data.redis.version>
         <g2rain.starter.mybatis.pagination.version>1.0.4</g2rain.starter.mybatis.pagination.version>
-        <springdoc.openapi.version>3.0.2</springdoc.openapi.version>
+        <g2rain.starter.spring.doc.version>1.0.0</g2rain.starter.spring.doc.version>
         <g2rain.crafter.version>1.0.5</g2rain.crafter.version>
         <flatten.maven.plugin.version>1.7.3</flatten.maven.plugin.version>
         <maven.source.plugin.version>3.4.0</maven.source.plugin.version>
@@ -132,9 +132,9 @@
                 <version>${g2rain.starter.mybatis.pagination.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
-                <version>${springdoc.openapi.version}</version>
+                <groupId>com.g2rain</groupId>
+                <artifactId>g2rain-starter-spring-doc</artifactId>
+                <version>${g2rain.starter.spring.doc.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
