@@ -41,6 +41,12 @@ public class I18nMessageSelectDto extends BaseSelectListDto {
     private String regionCode;
 
     /**
+     * 国家/地区编码,如 CN
+     */
+    @Schema(hidden = true, description = "国家/地区编码,如 CN")
+    private String uniqueRegionCode;
+
+    /**
      * 国际化消息编码(唯一)
      */
     @Schema(description = "国际化消息编码")

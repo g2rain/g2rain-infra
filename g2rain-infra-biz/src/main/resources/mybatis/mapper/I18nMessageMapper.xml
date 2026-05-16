@@ -270,6 +270,14 @@
             <if test="regionCode != null">
                 AND region_code = #{regionCode, jdbcType=VARCHAR}
             </if>
+            <choose>
+                <when test="uniqueRegionCode != null and uniqueRegionCode != ''">
+                    AND region_code = #{uniqueRegionCode, jdbcType=VARCHAR}
+                </when>
+                <otherwise>
+                    AND (region_code IS NULL OR region_code = '')
+                </otherwise>
+            </choose>
             <if test="messageCode != null">
                 AND message_code = #{messageCode, jdbcType=VARCHAR}
             </if>
