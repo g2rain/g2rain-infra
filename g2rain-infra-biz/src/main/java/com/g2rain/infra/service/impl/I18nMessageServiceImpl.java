@@ -116,7 +116,7 @@ public class I18nMessageServiceImpl implements I18nMessageService {
         // 校验国际化信息是否重复
         I18nMessageSelectDto selectDto = new I18nMessageSelectDto();
         selectDto.setLanguageCode(dto.getLanguageCode());
-        selectDto.setRegionCode(dto.getRegionCode());
+        selectDto.setUniqueRegionCode(dto.getRegionCode());
         selectDto.setMessageUsageCode(dto.getMessageUsageCode());
         selectDto.setMessageCode(dto.getMessageCode());
         List<I18nMessagePo> i18nMessages = i18nMessageDao.selectList(selectDto);
