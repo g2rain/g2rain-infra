@@ -29,6 +29,12 @@ public class I18nMessageSelectDto extends BaseSelectListDto {
     private String messageUsageCode;
 
     /**
+     * 业务标签
+     */
+    @Schema(description = "业务标签")
+    private String tag;
+
+    /**
      * 语言编码,如 zh
      */
     @Schema(description = "语言编码,如 zh")
@@ -41,10 +47,10 @@ public class I18nMessageSelectDto extends BaseSelectListDto {
     private String regionCode;
 
     /**
-     * 国家/地区编码,如 CN
+     * 是否仅匹配空地区（region_code 为 NULL 或空字符串）
      */
-    @Schema(hidden = true, description = "国家/地区编码,如 CN")
-    private String uniqueRegionCode;
+    @Schema(hidden = true, description = "是否仅匹配空地区编码")
+    private Boolean matchEmptyRegionCode;
 
     /**
      * 国际化消息编码(唯一)

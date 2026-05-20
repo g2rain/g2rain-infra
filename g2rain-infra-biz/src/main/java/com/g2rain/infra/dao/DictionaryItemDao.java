@@ -2,6 +2,7 @@ package com.g2rain.infra.dao;
 
 import com.g2rain.infra.dao.po.DictionaryItemPo;
 import com.g2rain.infra.dto.DictionaryItemSelectDto;
+import com.g2rain.infra.dto.DictionaryLocalizedSelectDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -78,4 +79,12 @@ public interface DictionaryItemDao {
      * @return 字典明细数量
      */
     Long checkDictItemExists(DictionaryItemSelectDto selectDto);
+
+    /**
+     * 查询字典明细列表
+     *
+     * @param selectDto 查询条件
+     * @return 实体对象列表
+     */
+    List<DictionaryItemPo> selectLocalizedList(DictionaryLocalizedSelectDto selectDto);
 }

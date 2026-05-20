@@ -26,6 +26,11 @@ public class I18nMessagePo extends BasePo {
     private String messageUsageCode;
 
     /**
+     * 业务标签
+     */
+    private String tag;
+
+    /**
      * 语言编码,如 zh
      */
     private String languageCode;

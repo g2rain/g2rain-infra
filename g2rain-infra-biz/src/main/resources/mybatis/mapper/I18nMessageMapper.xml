@@ -12,6 +12,7 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <!-- 业务字段（其他自定义字段） -->
         <result column="message_usage_code" property="messageUsageCode" jdbcType="VARCHAR"/>
+        <result column="tag" property="tag" jdbcType="VARCHAR"/>
         <result column="language_code" property="languageCode" jdbcType="VARCHAR"/>
         <result column="region_code" property="regionCode" jdbcType="VARCHAR"/>
         <result column="message_code" property="messageCode" jdbcType="VARCHAR"/>
@@ -50,6 +51,10 @@
                         message_usage_code
                         <include refid="directionClause"/>
                     </when>
+                    <when test="item.column == 'tag'">
+                        tag
+                        <include refid="directionClause"/>
+                    </when>
                     <when test="item.column == 'languageCode'">
                         language_code
                         <include refid="directionClause"/>
@@ -83,7 +88,7 @@
         <!-- 基础字段 -->
         create_time, update_time,
         <!-- 业务字段 -->
-        message_usage_code, language_code, region_code, message_code, message_text, extend_field,
+        message_usage_code, tag, language_code, region_code, message_code, message_text, extend_field,
         <!-- version字段（如果存在） -->
         version
         ) VALUES (
@@ -92,7 +97,7 @@
         <!-- 基础字段值 -->
         #{createTime, jdbcType=TIMESTAMP}, #{updateTime, jdbcType=TIMESTAMP},
         <!-- 业务字段值 -->
-        #{messageUsageCode, jdbcType=VARCHAR}, #{languageCode, jdbcType=VARCHAR}, #{regionCode, jdbcType=VARCHAR}, #{messageCode, jdbcType=VARCHAR}, #{messageText, jdbcType=LONGVARCHAR}, #{extendField, jdbcType=LONGVARCHAR},
+        #{messageUsageCode, jdbcType=VARCHAR}, #{tag, jdbcType=VARCHAR}, #{languageCode, jdbcType=VARCHAR}, #{regionCode, jdbcType=VARCHAR}, #{messageCode, jdbcType=VARCHAR}, #{messageText, jdbcType=LONGVARCHAR}, #{extendField, jdbcType=LONGVARCHAR},
         <!-- version字段值（如果存在，设置默认值为0） -->
         0
         )
@@ -106,7 +111,7 @@
         <!-- 基础字段 -->
         create_time, update_time,
         <!-- 业务字段 -->
-        message_usage_code, language_code, region_code, message_code, message_text, extend_field,
+        message_usage_code, tag, language_code, region_code, message_code, message_text, extend_field,
         <!-- version字段（如果存在） -->
         version
         ) VALUES
@@ -117,7 +122,7 @@
             <!-- 基础字段值 -->
             #{item.createTime, jdbcType=TIMESTAMP}, #{item.updateTime, jdbcType=TIMESTAMP},
             <!-- 业务字段值 -->
-            #{item.messageUsageCode, jdbcType=VARCHAR}, #{item.languageCode, jdbcType=VARCHAR}, #{item.regionCode, jdbcType=VARCHAR}, #{item.messageCode, jdbcType=VARCHAR}, #{item.messageText, jdbcType=LONGVARCHAR}, #{item.extendField, jdbcType=LONGVARCHAR},
+            #{item.messageUsageCode, jdbcType=VARCHAR}, #{item.tag, jdbcType=VARCHAR}, #{item.languageCode, jdbcType=VARCHAR}, #{item.regionCode, jdbcType=VARCHAR}, #{item.messageCode, jdbcType=VARCHAR}, #{item.messageText, jdbcType=LONGVARCHAR}, #{item.extendField, jdbcType=LONGVARCHAR},
             <!-- version字段值（如果存在，设置默认值为0） -->
             0
             )
@@ -135,6 +140,9 @@
             <!-- 业务字段更新 -->
             <if test="messageUsageCode != null">
                 message_usage_code = #{messageUsageCode, jdbcType=VARCHAR},
+            </if>
+            <if test="tag != null">
+                tag = #{tag, jdbcType=VARCHAR},
             </if>
             <if test="languageCode != null">
                 language_code = #{languageCode, jdbcType=VARCHAR},
@@ -168,6 +176,9 @@
             <!-- 业务字段更新 -->
             <if test="messageUsageCode != null">
                 message_usage_code = #{messageUsageCode, jdbcType=VARCHAR},
+            </if>
+            <if test="tag != null">
+                tag = #{tag, jdbcType=VARCHAR},
             </if>
             <if test="languageCode != null">
                 language_code = #{languageCode, jdbcType=VARCHAR},
@@ -205,7 +216,7 @@
         <!-- 基础字段 -->
         create_time, update_time,
         <!-- 业务字段 -->
-        message_usage_code, language_code, region_code, message_code, message_text, extend_field,
+        message_usage_code, tag, language_code, region_code, message_code, message_text, extend_field,
         <!-- version字段（如果存在） -->
         version
         FROM i18n_message
@@ -220,7 +231,7 @@
         <!-- 基础字段 -->
         create_time, update_time,
         <!-- 业务字段 -->
-        message_usage_code, language_code, region_code, message_code, message_text, extend_field,
+        message_usage_code, tag, language_code, region_code, message_code, message_text, extend_field,
         <!-- version字段（如果存在） -->
         version
         FROM i18n_message
@@ -264,18 +275,20 @@
             <if test="messageUsageCode != null">
                 AND message_usage_code = #{messageUsageCode, jdbcType=VARCHAR}
             </if>
+            <if test="tag != null">
+                AND tag = #{tag, jdbcType=VARCHAR}
+            </if>
             <if test="languageCode != null">
                 AND language_code = #{languageCode, jdbcType=VARCHAR}
             </if>
-            <if test="regionCode != null">
-                AND region_code = #{regionCode, jdbcType=VARCHAR}
-            </if>
             <choose>
-                <when test="uniqueRegionCode != null and uniqueRegionCode != ''">
-                    AND region_code = #{uniqueRegionCode, jdbcType=VARCHAR}
+                <when test="regionCode != null and regionCode != ''">
+                    AND region_code = #{regionCode, jdbcType=VARCHAR}
                 </when>
                 <otherwise>
-                    AND (region_code IS NULL OR region_code = '')
+                    <if test="matchEmptyRegionCode != null and matchEmptyRegionCode">
+                        AND (region_code IS NULL OR region_code = '')
+                    </if>
                 </otherwise>
             </choose>
             <if test="messageCode != null">
@@ -289,5 +302,13 @@
             </if>
         </where>
         <include refid="dynamicOrderBy"/>
+    </select>
+
+    <select id="selectAllTags" resultType="java.lang.String">
+        SELECT DISTINCT tag
+        FROM i18n_message
+        WHERE tag IS NOT NULL
+          AND tag != ''
+        ORDER BY tag
     </select>
 </mapper>

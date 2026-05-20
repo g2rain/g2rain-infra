@@ -4,6 +4,7 @@ import com.g2rain.common.model.PageData;
 import com.g2rain.common.model.PageSelectListDto;
 import com.g2rain.common.model.Result;
 import com.g2rain.infra.dto.DictionaryItemSelectDto;
+import com.g2rain.infra.dto.DictionaryLocalizedSelectDto;
 import com.g2rain.infra.dto.DictionaryItemTreeSelectDto;
 import com.g2rain.infra.vo.DictionaryItemTreeVo;
 import com.g2rain.infra.vo.DictionaryItemVo;
@@ -42,6 +43,16 @@ public interface DictionaryItemApi {
     @GetMapping("/page")
     @Operation(summary = "分页查询字典明细列表", description = "分页查询字典明细列表")
     Result<PageData<DictionaryItemVo>> selectPage(PageSelectListDto<DictionaryItemSelectDto> selectDto);
+
+    /**
+     * 查询字典组件明细列表
+     *
+     * @param selectDto 查询条件 DTO
+     * @return 字典组件明细列表
+     */
+    @GetMapping("/localized_options")
+    @Operation(summary = "查询字典组件明细列表", description = "查询字典组件明细列表")
+    Result<List<DictionaryItemVo>> selectLocalizedOptions(DictionaryLocalizedSelectDto selectDto);
 
      /**
      * 查询树形字典

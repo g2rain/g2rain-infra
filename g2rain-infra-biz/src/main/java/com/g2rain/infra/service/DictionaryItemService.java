@@ -5,10 +5,9 @@ import com.g2rain.common.model.PageSelectListDto;
 import com.g2rain.infra.dto.DictionaryItemDto;
 import com.g2rain.infra.dto.DictionaryItemSelectDto;
 import com.g2rain.infra.dto.DictionaryItemTreeSelectDto;
+import com.g2rain.infra.dto.DictionaryLocalizedSelectDto;
 import com.g2rain.infra.vo.DictionaryItemTreeVo;
 import com.g2rain.infra.vo.DictionaryItemVo;
-import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
@@ -59,4 +58,12 @@ public interface DictionaryItemService {
      * @return 字典树形结构
      */
     List<DictionaryItemTreeVo> selectTree(DictionaryItemTreeSelectDto selectDto);
+
+    /**
+     * 查询字典组件明细列表
+     *
+     * @param selectDto 查询条件 DTO
+     * @return VO 对象列表
+     */
+    List<DictionaryItemVo> selectLocalizedOptions(DictionaryLocalizedSelectDto selectDto);
 }

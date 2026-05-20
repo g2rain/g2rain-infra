@@ -108,6 +108,13 @@ public class I18nMessageServiceImpl implements I18nMessageService {
             SystemErrorCode.PARAM_VAL_INVALID, "messageUsageCode"
         );
 
+        // 页面文案, 标签必填
+        if (i18nMsgUsage.equals(I18nMsgUsage.UI_MESSAGE)) {
+            Asserts.isTrue(Objects.nonNull(dto.getTag()), SystemErrorCode.PARAM_REQUIRED, "tag");
+        } else {// 非页面文案, 不需要设置标签
+            dto.setTag(null);
+        }
+
         boolean exists = Arrays.asList(Locale.getAvailableLocales()).contains(
             new Locale.Builder().setLanguage(dto.getLanguageCode()).setRegion(dto.getRegionCode()).build()
         );
@@ -115,8 +122,10 @@ public class I18nMessageServiceImpl implements I18nMessageService {
 
         // 校验国际化信息是否重复
         I18nMessageSelectDto selectDto = new I18nMessageSelectDto();
+        selectDto.setTag(dto.getTag());
         selectDto.setLanguageCode(dto.getLanguageCode());
-        selectDto.setUniqueRegionCode(dto.getRegionCode());
+        selectDto.setMatchEmptyRegionCode(true);
+        selectDto.setRegionCode(dto.getRegionCode());
         selectDto.setMessageUsageCode(dto.getMessageUsageCode());
         selectDto.setMessageCode(dto.getMessageCode());
         List<I18nMessagePo> i18nMessages = i18nMessageDao.selectList(selectDto);
@@ -192,6 +201,11 @@ public class I18nMessageServiceImpl implements I18nMessageService {
             .collect(Collectors.toList());
     }
 
+    @Override
+    public List<String> tagDict() {
+        return i18nMessageDao.selectAllTags();
+    }
+
     /**
      * 组装 `国际化错误信息` 广播消息
      *
@@ -199,9 +213,14 @@ public class I18nMessageServiceImpl implements I18nMessageService {
      * @return `国际化错误信息` 广播消息
      */
     private LocalizedErrorMessage toLocalizedErrorMessage(I18nMessagePo entity) {
+        String locale = new Locale.Builder()
+            .setLanguage(entity.getLanguageCode())
+            .setRegion(entity.getRegionCode())
+            .build()
+            .toLanguageTag();
         LocalizedErrorMessage msg = new LocalizedErrorMessage();
         msg.setErrorCode(entity.getMessageCode());
-        msg.setLocale(new Locale.Builder().setLanguage(entity.getLanguageCode()).setRegion(entity.getRegionCode()).build().toLanguageTag());
+        msg.setLocale(locale);
         msg.setMessageTemplate(entity.getMessageText());
         return msg;
     }

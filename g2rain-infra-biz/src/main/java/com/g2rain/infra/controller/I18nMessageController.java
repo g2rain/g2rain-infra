@@ -75,4 +75,15 @@ public class I18nMessageController implements I18nMessageApi {
     public Result<List<I18nMsgUsageVo>> i18nMessageUsages() {
         return Result.success(i18nMessageService.i18nMessageUsages());
     }
+
+    /**
+     * 查询业务标签字典集合
+     *
+     * @return 去重后的业务标签列表
+     */
+    @GetMapping("/tag_dict")
+    @Operation(summary = "查询业务标签字典集合", description = "查询 i18n_message 表中已存在的去重业务标签，供页面选择")
+    public Result<List<String>> tagDict() {
+        return Result.success(i18nMessageService.tagDict());
+    }
 }

@@ -6,6 +6,7 @@ import com.g2rain.common.model.Result;
 import com.g2rain.infra.api.DictionaryItemApi;
 import com.g2rain.infra.dto.DictionaryItemDto;
 import com.g2rain.infra.dto.DictionaryItemSelectDto;
+import com.g2rain.infra.dto.DictionaryLocalizedSelectDto;
 import com.g2rain.infra.dto.DictionaryItemTreeSelectDto;
 import com.g2rain.infra.service.DictionaryItemService;
 import com.g2rain.infra.vo.DictionaryItemTreeVo;
@@ -44,6 +45,11 @@ public class DictionaryItemController implements DictionaryItemApi {
     @Override
     public Result<PageData<DictionaryItemVo>> selectPage(PageSelectListDto<DictionaryItemSelectDto> selectDto) {
         return Result.successPage(dictionaryItemService.selectPage(selectDto));
+    }
+
+    @Override
+    public Result<List<DictionaryItemVo>> selectLocalizedOptions(DictionaryLocalizedSelectDto selectDto) {
+        return Result.success(dictionaryItemService.selectLocalizedOptions(selectDto));
     }
 
     @Override
