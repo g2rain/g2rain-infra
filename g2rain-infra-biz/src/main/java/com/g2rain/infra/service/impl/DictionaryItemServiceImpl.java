@@ -8,6 +8,7 @@ import com.g2rain.common.model.PageSelectListDto;
 import com.g2rain.common.utils.Asserts;
 import com.g2rain.common.utils.Collections;
 import com.g2rain.common.utils.Moments;
+import com.g2rain.common.web.PrincipalContextHolder;
 import com.g2rain.infra.converter.DictionaryItemConverter;
 import com.g2rain.infra.dao.DictionaryItemDao;
 import com.g2rain.infra.dao.DictionaryUsageDao;
@@ -16,6 +17,7 @@ import com.g2rain.infra.dao.po.DictionaryUsagePo;
 import com.g2rain.infra.dto.DictionaryItemDto;
 import com.g2rain.infra.dto.DictionaryItemSelectDto;
 import com.g2rain.infra.dto.DictionaryItemTreeSelectDto;
+import com.g2rain.infra.dto.DictionaryLocalizedSelectDto;
 import com.g2rain.infra.dto.DictionaryUsageSelectDto;
 import com.g2rain.infra.service.DictionaryItemService;
 import com.g2rain.infra.vo.DictionaryItemTreeVo;
@@ -33,6 +35,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -133,6 +136,24 @@ public class DictionaryItemServiceImpl implements DictionaryItemService {
      * 按用途查出全部未删除字典项，在内存中按 {@code parentId} 组装为多叉树。
      * 根节点：{@code parentId} 为 {@code null} 或 {@code 0}；父节点不在本次结果中的节点视为孤儿，挂到根层，避免丢失。
      */
+    @Override
+    public List<DictionaryItemVo> selectLocalizedOptions(DictionaryLocalizedSelectDto selectDto) {
+        String acceptLanguage = PrincipalContextHolder.getAcceptLanguage();
+        Locale locale;
+        if (Objects.nonNull(acceptLanguage) && !acceptLanguage.isBlank()) {
+            locale = Locale.forLanguageTag(acceptLanguage);
+        } else {
+            locale = Locale.getDefault();
+        }
+
+        selectDto.setLanguageCode(locale.getLanguage());
+        selectDto.setRegionCode(locale.getCountry());
+        return dictionaryItemDao.selectLocalizedList(selectDto)
+            .stream()
+            .map(DictionaryItemConverter.INSTANCE::po2vo)
+            .toList();
+    }
+
     @Override
     public List<DictionaryItemTreeVo> selectTree(DictionaryItemTreeSelectDto selectDto) {
         DictionaryItemSelectDto query = new DictionaryItemSelectDto();

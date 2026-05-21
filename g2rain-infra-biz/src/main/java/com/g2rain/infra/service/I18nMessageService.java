@@ -55,4 +55,11 @@ public interface I18nMessageService {
      * @return 国际化用途集合
      */
     List<I18nMsgUsageVo> i18nMessageUsages();
+
+    /**
+     * 查询业务标签字典集合（去重）
+     *
+     * @return 业务标签字典集合
+     */
+    List<String> tagDict();
 }

@@ -29,6 +29,12 @@ public class I18nMessageVo extends BaseVo {
     private String messageUsageCode;
 
     /**
+     * 业务标签
+     */
+    @Schema(description = "业务标签")
+    private String tag;
+
+    /**
      * 语言编码,如 zh
      */
     @Schema(description = "语言编码,如 zh")

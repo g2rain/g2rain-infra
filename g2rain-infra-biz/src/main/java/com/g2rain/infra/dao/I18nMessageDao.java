@@ -70,4 +70,11 @@ public interface I18nMessageDao {
      * @return 实体对象列表
      */
     List<I18nMessagePo> selectList(I18nMessageSelectDto selectDto);
+
+    /**
+     * 查询所有去重后的业务标签
+     *
+     * @return 业务标签列表
+     */
+    List<String> selectAllTags();
 }

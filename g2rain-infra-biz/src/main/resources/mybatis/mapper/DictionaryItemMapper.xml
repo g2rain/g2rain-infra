@@ -164,7 +164,8 @@
         <!-- 基础字段值 -->
         #{createTime, jdbcType=TIMESTAMP}, #{updateTime, jdbcType=TIMESTAMP},
         <!-- 业务字段值 -->
-        #{parentId, jdbcType=BIGINT}, #{usageCode, jdbcType=VARCHAR}, #{code, jdbcType=VARCHAR}, #{name, jdbcType=VARCHAR}, #{description, jdbcType=VARCHAR}, #{sortIndex, jdbcType=INTEGER},
+        #{parentId, jdbcType=BIGINT}, #{usageCode, jdbcType=VARCHAR}, #{code, jdbcType=VARCHAR},
+        #{name, jdbcType=VARCHAR}, #{description, jdbcType=VARCHAR}, #{sortIndex, jdbcType=INTEGER},
         <!-- deleteFlag字段值（如果存在，设置默认值为0） -->
         0,
         <!-- version字段值（如果存在，设置默认值为0） -->
@@ -193,7 +194,8 @@
             <!-- 基础字段值 -->
             #{item.createTime, jdbcType=TIMESTAMP}, #{item.updateTime, jdbcType=TIMESTAMP},
             <!-- 业务字段值 -->
-            #{item.parentId, jdbcType=BIGINT}, #{item.usageCode, jdbcType=VARCHAR}, #{item.code, jdbcType=VARCHAR}, #{item.name, jdbcType=VARCHAR}, #{item.description, jdbcType=VARCHAR}, #{item.sortIndex, jdbcType=INTEGER},
+            #{item.parentId, jdbcType=BIGINT}, #{item.usageCode, jdbcType=VARCHAR}, #{item.code, jdbcType=VARCHAR},
+            #{item.name, jdbcType=VARCHAR}, #{item.description, jdbcType=VARCHAR}, #{item.sortIndex, jdbcType=INTEGER},
             <!-- deleteFlag字段值（如果存在，设置默认值为0） -->
             0,
             <!-- version字段值（如果存在，设置默认值为0） -->
@@ -320,5 +322,68 @@
     <select id="checkDictItemExists" parameterType="com.g2rain.infra.dto.DictionaryItemSelectDto" resultType="Long">
         SELECT count(1) TOTAL FROM dictionary_item
         <include refid="commonWhereClause"/>
+    </select>
+
+    <!-- 字典 i18n 文案（zh-CN 精确匹配优先，无则回退 zh；无地区码时不做语言回退） -->
+    <sql id="localizedI18nText">
+        COALESCE(i18n_exact.message_text<if test="regionCode != null and regionCode != ''">, i18n_lang.message_text</if>)
+    </sql>
+
+    <!-- 字典组件：左关联 i18n_message（zh-CN → zh 回退），展示名 COALESCE(国际化文案, 字典默认名称) -->
+    <select id="selectLocalizedList" parameterType="com.g2rain.infra.dto.DictionaryLocalizedSelectDto"
+            resultMap="BaseResultMap">
+        SELECT di.id, di.parent_id, di.usage_code, di.code,
+        COALESCE(<include refid="localizedI18nText"/>, di.name) AS name,
+        di.description, di.sort_index
+        FROM (
+        SELECT id, parent_id, usage_code, code, name, description, sort_index
+        FROM dictionary_item
+        <where>
+            <if test="usageCode != null and usageCode != ''">
+                AND usage_code = #{usageCode, jdbcType=VARCHAR}
+            </if>
+            <if test="code != null and code != ''">
+                AND code = #{code, jdbcType=VARCHAR}
+            </if>
+            AND (delete_flag = 0 OR delete_flag IS NULL)
+        </where>
+        ) di
+        LEFT JOIN i18n_message i18n_exact
+        ON i18n_exact.message_usage_code = 'DICTIONARY'
+        AND i18n_exact.message_code = di.code
+        AND i18n_exact.language_code = #{languageCode, jdbcType=VARCHAR}
+        <choose>
+            <when test="regionCode != null and regionCode != ''">
+                AND i18n_exact.region_code = #{regionCode, jdbcType=VARCHAR}
+            </when>
+            <otherwise>
+                AND (i18n_exact.region_code IS NULL OR i18n_exact.region_code = '')
+            </otherwise>
+        </choose>
+        <if test="regionCode != null and regionCode != ''">
+            LEFT JOIN i18n_message i18n_lang
+            ON i18n_lang.message_usage_code = 'DICTIONARY'
+            AND i18n_lang.message_code = di.code
+            AND i18n_lang.language_code = #{languageCode, jdbcType=VARCHAR}
+            AND (i18n_lang.region_code IS NULL OR i18n_lang.region_code = '')
+        </if>
+        <where>
+            <if test="name != null and name != ''">
+                AND (
+                (
+                <include refid="localizedI18nText"/>
+                IS NOT NULL
+                AND
+                <include refid="localizedI18nText"/>
+                LIKE CONCAT('%', #{name, jdbcType=VARCHAR}, '%'))
+                OR
+                (
+                <include refid="localizedI18nText"/>
+                IS NULL
+                AND di.name LIKE CONCAT('%', #{name, jdbcType=VARCHAR}, '%'))
+                )
+            </if>
+        </where>
+        ORDER BY di.sort_index ASC, di.id ASC
     </select>
 </mapper>

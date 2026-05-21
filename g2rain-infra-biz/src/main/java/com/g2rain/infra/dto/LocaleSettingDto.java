@@ -3,6 +3,7 @@ package com.g2rain.infra.dto;
 import com.g2rain.common.model.BaseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,4 +41,11 @@ public class LocaleSettingDto extends BaseDto {
      */
     @Schema(description = "语言描述")
     private String description;
+
+    /**
+     * 业务排序
+     */
+    @NotNull
+    @Schema(description = "业务排序", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Integer sortIndex;
 }
