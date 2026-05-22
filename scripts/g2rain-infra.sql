@@ -4,8 +4,7 @@
 -- =============================================
 
 -- 创建数据库
-CREATE
-DATABASE IF NOT EXISTS `g2rain_infra` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS `g2rain_infra` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `g2rain_infra`;
 
 -- =============================================
@@ -13,8 +12,7 @@ USE `g2rain_infra`;
 -- =============================================
 DROP TABLE IF EXISTS `dictionary_usage`;
 
-CREATE TABLE `dictionary_usage`
-(
+CREATE TABLE `dictionary_usage` (
     `id`          BIGINT      NOT NULL COMMENT                                                          '主键标识',
     `usage_code`  VARCHAR(64) NOT NULL COMMENT                                                          '字典用途代码',
     `usage_name`  VARCHAR(64) NOT NULL COMMENT                                                          '字典用途名称',
@@ -31,8 +29,7 @@ CREATE TABLE `dictionary_usage`
 -- =============================================
 DROP TABLE IF EXISTS `dictionary_item`;
 
-CREATE TABLE `dictionary_item`
-(
+CREATE TABLE `dictionary_item` (
     `id`          BIGINT       NOT NULL COMMENT                                                         '主键标识',
     `parent_id`   BIGINT NULL COMMENT                                                                   '父节点ID,用于 tree 结构字典',
     `usage_code`  VARCHAR(64)  NOT NULL COMMENT                                                         '字典用途代码',
@@ -52,8 +49,7 @@ CREATE TABLE `dictionary_item`
 -- =============================================
 DROP TABLE IF EXISTS `locale_setting`;
 
-CREATE TABLE `locale_setting`
-(
+CREATE TABLE `locale_setting` (
     `id`            BIGINT      NOT NULL COMMENT                                                        '主键标识',
     `language_code` VARCHAR(32) NOT NULL COMMENT                                                        '语言编码,如 zh',
     `region_code`   VARCHAR(32) NOT NULL COMMENT                                                        '国家/地区编码,如 CN',
@@ -73,8 +69,7 @@ CREATE TABLE `locale_setting`
 -- =============================================
 DROP TABLE IF EXISTS `i18n_message`;
 
-CREATE TABLE `i18n_message`
-(
+CREATE TABLE `i18n_message` (
     `id`                 BIGINT       NOT NULL COMMENT                                                  '主键标识',
     `message_usage_code` VARCHAR(64)  NOT NULL COMMENT                                                  '消息用途代码',
     `tag`                VARCHAR(128) NULL     COMMENT                                                  '业务标签',
@@ -94,8 +89,7 @@ CREATE TABLE `i18n_message`
 -- =============================================
 DROP TABLE IF EXISTS `g2rain_raindrop`;
 
-CREATE TABLE `g2rain_raindrop`
-(
+CREATE TABLE `g2rain_raindrop` (
     `id`          BIGINT       NOT NULL AUTO_INCREMENT COMMENT                                          '主键标识',
     `biz_tag`     VARCHAR(128) NOT NULL COMMENT                                                         '业务标识,每个业务对应一行',
     `max_id`      BIGINT       NOT NULL DEFAULT 1 COMMENT                                               '当前分配到的最大ID',
@@ -280,7 +274,10 @@ VALUES (88, 'ERROR_CODE', NULL, 'zh', 'CN', 'system.40000', '参数无效', null
        (199, 'ERROR_CODE', NULL, 'zh', 'CN', 'iam.40102', '刷新 Token 过期', null, '2026-05-05 15:27:32', '2026-05-05 15:27:32'),
        (200, 'ERROR_CODE', NULL, 'zh', 'CN', 'isolation.50001', '租户条件不存在: {0:tenantId} 参数未提供', null, '2026-05-05 15:27:32', '2026-05-05 15:27:32'),
        (201, 'ERROR_CODE', NULL, 'zh', 'CN', 'isolation.50002', '租户条件不在允许范围: {0:tenantId} 当前租户不可访问', null, '2026-05-05 15:27:32', '2026-05-05 15:27:32'),
-       (202, 'ERROR_CODE', NULL, 'zh', 'CN', 'gateway.40001', 'token invalid', null, '2026-05-05 15:27:32', '2026-05-05 15:27:32'),
-       (203, 'ERROR_CODE', NULL, 'zh', 'CN', 'gateway.40002', 'token expired', null, '2026-05-05 15:27:32', '2026-05-05 15:27:32'),
-       (205, 'ERROR_CODE', NULL, 'zh', 'CN', 'gateway.40003', 'Subscription expired, please renew', null, '2026-05-05 15:27:32', '2026-05-05 15:27:32'),
-       (206, 'ERROR_CODE', NULL, 'zh', 'CN', 'gateway.40004', 'Request body exceeds limit: {0:maxBytes} bytes', null, '2026-05-05 15:27:32', '2026-05-05 15:27:32');
+       (202, 'ERROR_CODE', NULL, 'zh', 'CN', 'gateway.40001', '令牌无效', null, '2026-05-05 15:27:32', '2026-05-05 15:27:32'),
+       (203, 'ERROR_CODE', NULL, 'zh', 'CN', 'gateway.40002', '令牌已过期', null, '2026-05-05 15:27:32', '2026-05-05 15:27:32'),
+       (205, 'ERROR_CODE', NULL, 'zh', 'CN', 'gateway.40003', '订阅已过期，请续费', null, '2026-05-05 15:27:32', '2026-05-05 15:27:32'),
+       (206, 'ERROR_CODE', NULL, 'zh', 'CN', 'gateway.40004', '请求体超过限制：{0:maxBytes} 字节', null, '2026-05-05 15:27:32', '2026-05-05 15:27:32'),
+       (1061, 'ERROR_CODE', NULL, 'zh', 'CN', 'basis.40056', '只能创建本机构的 API Key', null, '2026-05-05 15:27:32', '2026-05-05 15:27:32'),
+       (1062, 'ERROR_CODE', NULL, 'zh', 'CN', 'gateway.40005', 'API Key 无效', null, '2026-05-05 15:27:32', '2026-05-05 15:27:32'),
+       (1063, 'ERROR_CODE', NULL, 'zh', 'CN', 'gateway.40006', 'API Key 已吊销', null, '2026-05-05 15:27:32', '2026-05-05 15:27:32');
