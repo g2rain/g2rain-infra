@@ -4,6 +4,7 @@ import com.g2rain.common.model.PageData;
 import com.g2rain.common.model.PageSelectListDto;
 import com.g2rain.infra.dto.I18nMessageDto;
 import com.g2rain.infra.dto.I18nMessageSelectDto;
+import com.g2rain.infra.vo.I18nLocaleMessageVo;
 import com.g2rain.infra.vo.I18nMessageVo;
 import com.g2rain.infra.vo.I18nMsgUsageVo;
 
@@ -62,4 +63,13 @@ public interface I18nMessageService {
      * @return 业务标签字典集合
      */
     List<String> tagDict();
+
+    /**
+     * 根据标签获取页面国际化元素
+     *
+     * @param selectDto 查询条件 DTO
+     * @return VO 对象列表
+     */
+    List<I18nLocaleMessageVo> i18nMessageLocale(I18nMessageSelectDto selectDto);
+
 }
