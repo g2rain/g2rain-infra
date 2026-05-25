@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -92,7 +93,8 @@ public class I18nMessageController implements I18nMessageApi {
     @GetMapping("/locale")
     @LoginGuard(require = false)
     @Operation(summary = "根据标签获取页面国际化元素", description = "根据标签获取页面国际化元素")
-    public Result<List<I18nLocaleMessageVo>> i18nMessageLocale(I18nMessageSelectDto selectDto) {
-        return Result.success(i18nMessageService.i18nMessageLocale(selectDto));
+    public Result<List<I18nLocaleMessageVo>> i18nMessageLocale(@Parameter(description = "业务标签", required = true) @RequestParam String tag,
+                                                               @Parameter(description = "语言-地区", required = true) @RequestParam String locale) {
+        return Result.success(i18nMessageService.i18nMessageLocale(tag, locale));
     }
 }

@@ -208,9 +208,14 @@ public class I18nMessageServiceImpl implements I18nMessageService {
     }
 
     @Override
-    public List<I18nLocaleMessageVo> i18nMessageLocale(I18nMessageSelectDto selectDto) {
-        return i18nMessageDao.selectList(selectDto)
-            .stream()
+    public List<I18nLocaleMessageVo> i18nMessageLocale(String tag, String locale) {
+        I18nMessageSelectDto selectDto = new I18nMessageSelectDto();
+        selectDto.setMessageUsageCode(I18nMsgUsage.UI_MESSAGE.name());
+        selectDto.setTag(tag);
+        Locale l = Locale.forLanguageTag(locale);
+        selectDto.setLanguageCode(l.getLanguage());
+        selectDto.setRegionCode(l.getCountry());
+        return i18nMessageDao.selectList(selectDto).stream()
             .map(I18nMessageConverter.INSTANCE::po2locale)
             .toList();
     }

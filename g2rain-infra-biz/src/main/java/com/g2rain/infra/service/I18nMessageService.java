@@ -67,9 +67,10 @@ public interface I18nMessageService {
     /**
      * 根据标签获取页面国际化元素
      *
-     * @param selectDto 查询条件 DTO
+     * @param tag    业务标签
+     * @param locale 语言-地区
      * @return VO 对象列表
      */
-    List<I18nLocaleMessageVo> i18nMessageLocale(I18nMessageSelectDto selectDto);
+    List<I18nLocaleMessageVo> i18nMessageLocale(String tag, String locale);
 
 }
