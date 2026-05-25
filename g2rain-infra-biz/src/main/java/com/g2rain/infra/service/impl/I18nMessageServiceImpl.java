@@ -18,6 +18,7 @@ import com.g2rain.infra.enums.I18nMsgUsage;
 import com.g2rain.infra.enums.InfraSyncerEnum;
 import com.g2rain.infra.service.I18nMessageService;
 import com.g2rain.infra.utils.Constants;
+import com.g2rain.infra.vo.I18nLocaleMessageVo;
 import com.g2rain.infra.vo.I18nMessageVo;
 import com.g2rain.infra.vo.I18nMsgUsageVo;
 import com.g2rain.mybatis.pagination.PageContext;
@@ -204,6 +205,19 @@ public class I18nMessageServiceImpl implements I18nMessageService {
     @Override
     public List<String> tagDict() {
         return i18nMessageDao.selectAllTags();
+    }
+
+    @Override
+    public List<I18nLocaleMessageVo> i18nMessageLocale(String tag, String locale) {
+        I18nMessageSelectDto selectDto = new I18nMessageSelectDto();
+        selectDto.setMessageUsageCode(I18nMsgUsage.UI_MESSAGE.name());
+        selectDto.setTag(tag);
+        Locale l = Locale.forLanguageTag(locale);
+        selectDto.setLanguageCode(l.getLanguage());
+        selectDto.setRegionCode(l.getCountry());
+        return i18nMessageDao.selectList(selectDto).stream()
+            .map(I18nMessageConverter.INSTANCE::po2locale)
+            .toList();
     }
 
     /**
