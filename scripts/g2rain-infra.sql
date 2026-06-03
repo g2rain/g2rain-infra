@@ -4,7 +4,7 @@
 -- =============================================
 
 -- 创建数据库
-CREATE DATABASE IF NOT EXISTS `g2rain_infra` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS `g2rain_infra` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 USE `g2rain_infra`;
 
 -- =============================================
@@ -22,7 +22,7 @@ CREATE TABLE `dictionary_usage` (
     `version`     INT         NOT NULL DEFAULT 0 COMMENT                                                '记录版本',
     `delete_flag` TINYINT     NOT NULL DEFAULT 0 COMMENT                                                '删除标识[0:未删除, 1:已删除]',
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT=                             '字典用途表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT=                             '字典用途表';
 
 -- =============================================
 -- 2. 字典明细表 (dictionary_item)
@@ -36,13 +36,13 @@ CREATE TABLE `dictionary_item` (
     `code`        VARCHAR(64)  NOT NULL COMMENT                                                         '字典项编码,用于系统标识',
     `name`        VARCHAR(128) NOT NULL COMMENT                                                         '字典名称(默认语言)',
     `description` VARCHAR(512)          DEFAULT NULL COMMENT                                            '业务描述',
-    `sort_index`  INT                   DEFAULT NULL COMMENT                                            '字典排序',
+    `sort_index`  INT          NOT NULL DEFAULT 0 COMMENT                                               '字典排序',
     `create_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP COMMENT                                      '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT          '更新时间',
     `version`     INT          NOT NULL DEFAULT 0 COMMENT                                               '记录版本',
     `delete_flag` TINYINT      NOT NULL DEFAULT 0 COMMENT                                               '删除标识[0:未删除, 1:已删除]',
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT=                             '字典明细表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT=                             '字典明细表';
 
 -- =============================================
 -- 3. 地域-语言设置表 (locale_setting)
@@ -56,13 +56,13 @@ CREATE TABLE `locale_setting` (
     `code`          VARCHAR(64) NOT NULL COMMENT                                                        '区域标识,如 zh-CN',
     `name`          VARCHAR(64) NOT NULL COMMENT                                                        '区域名称,如 中国-简体中文',
     `description`   VARCHAR(255)         DEFAULT NULL COMMENT                                           '语言描述',
-    `sort_index`    INT                  DEFAULT NULL COMMENT                                           '业务排序',
+    `sort_index`    INT          NOT NULL DEFAULT 0 COMMENT                                             '业务排序',
     `create_time`   TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP COMMENT                                    '创建时间',
     `update_time`   TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT        '更新时间',
     `version`       INT         NOT NULL DEFAULT 0 COMMENT                                              '记录版本',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_code` (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT=                             '地域-语言设置表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT=                             '地域-语言设置表';
 
 -- =============================================
 -- 4. 国际化信息表 (i18n_message)
@@ -82,7 +82,7 @@ CREATE TABLE `i18n_message` (
     `update_time`        TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT   '更新时间',
     `version`            INT          NOT NULL DEFAULT 0 COMMENT                                        '记录版本',
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT=                             '国际化信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT=                             '国际化信息表';
 
 -- =============================================
 -- 5. 全局唯一ID管理表 (g2rain_raindrop)
@@ -100,7 +100,10 @@ CREATE TABLE `g2rain_raindrop` (
     `version`     INT          NOT NULL DEFAULT 0 COMMENT                                               '记录版本',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_biz_tag` (`biz_tag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT=                             '全局唯一ID管理表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT=                             '全局唯一ID管理表';
+
+
+
 
 insert into g2rain_raindrop (`id`, `biz_tag`, `max_id`, `step`, `description`, `create_time`, `update_time`)
 values (1, 'COMMON', 2000, 100, '全局共用号段', '2026-05-05 15:27:32', '2026-05-05 15:27:32');

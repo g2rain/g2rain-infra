@@ -278,6 +278,12 @@
             <if test="tag != null">
                 AND tag = #{tag, jdbcType=VARCHAR}
             </if>
+            <if test="tags != null and tags.size() > 0">
+                AND tag IN
+                <foreach collection="tags" item="item" open="(" separator="," close=")">
+                    #{item, jdbcType=VARCHAR}
+                </foreach>
+            </if>
             <if test="languageCode != null">
                 AND language_code = #{languageCode, jdbcType=VARCHAR}
             </if>
