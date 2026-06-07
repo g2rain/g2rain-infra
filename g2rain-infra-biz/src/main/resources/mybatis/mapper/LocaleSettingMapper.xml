@@ -16,6 +16,7 @@
         <result column="code" property="code" jdbcType="VARCHAR"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
         <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="sort_index" property="sortIndex" jdbcType="INTEGER"/>
         <!-- version字段（如果存在） -->
         <result column="version" property="version" jdbcType="INTEGER"/>
     </resultMap>
@@ -65,6 +66,10 @@
                         description
                         <include refid="directionClause"/>
                     </when>
+                    <when test="item.column == 'sortIndex'">
+                        sort_index
+                        <include refid="directionClause"/>
+                    </when>
                 </choose>
             </foreach>
         </trim>
@@ -78,7 +83,7 @@
         <!-- 基础字段 -->
         create_time, update_time,
         <!-- 业务字段 -->
-        language_code, region_code, code, name, description,
+        language_code, region_code, code, name, description, sort_index,
         <!-- version字段（如果存在） -->
         version
         ) VALUES (
@@ -87,7 +92,8 @@
         <!-- 基础字段值 -->
         #{createTime, jdbcType=TIMESTAMP}, #{updateTime, jdbcType=TIMESTAMP},
         <!-- 业务字段值 -->
-        #{languageCode, jdbcType=VARCHAR}, #{regionCode, jdbcType=VARCHAR}, #{code, jdbcType=VARCHAR}, #{name, jdbcType=VARCHAR}, #{description, jdbcType=VARCHAR},
+        #{languageCode, jdbcType=VARCHAR}, #{regionCode, jdbcType=VARCHAR}, #{code, jdbcType=VARCHAR},
+        #{name, jdbcType=VARCHAR}, #{description, jdbcType=VARCHAR}, #{sortIndex, jdbcType=INTEGER},
         <!-- version字段值（如果存在，设置默认值为0） -->
         0
         )
@@ -101,7 +107,7 @@
         <!-- 基础字段 -->
         create_time, update_time,
         <!-- 业务字段 -->
-        language_code, region_code, code, name, description,
+        language_code, region_code, code, name, description, sort_index,
         <!-- version字段（如果存在） -->
         version
         ) VALUES
@@ -112,7 +118,9 @@
             <!-- 基础字段值 -->
             #{item.createTime, jdbcType=TIMESTAMP}, #{item.updateTime, jdbcType=TIMESTAMP},
             <!-- 业务字段值 -->
-            #{item.languageCode, jdbcType=VARCHAR}, #{item.regionCode, jdbcType=VARCHAR}, #{item.code, jdbcType=VARCHAR}, #{item.name, jdbcType=VARCHAR}, #{item.description, jdbcType=VARCHAR},
+            #{item.languageCode, jdbcType=VARCHAR}, #{item.regionCode, jdbcType=VARCHAR},
+            #{item.code, jdbcType=VARCHAR}, #{item.name, jdbcType=VARCHAR}, #{item.description, jdbcType=VARCHAR},
+            #{item.sortIndex, jdbcType=INTEGER},
             <!-- version字段值（如果存在，设置默认值为0） -->
             0
             )
@@ -142,6 +150,9 @@
             </if>
             <if test="description != null">
                 description = #{description, jdbcType=VARCHAR},
+            </if>
+            <if test="sortIndex != null">
+                sort_index = #{sortIndex, jdbcType=INTEGER},
             </if>
             <!-- version字段更新（如果存在，版本号自增） -->
             version = version + 1
@@ -173,6 +184,9 @@
             <if test="description != null">
                 description = #{description, jdbcType=VARCHAR},
             </if>
+            <if test="sortIndex != null">
+                sort_index = #{sortIndex, jdbcType=INTEGER},
+            </if>
             <!-- version字段更新（乐观锁版本号自增） -->
             version = version + 1
         </set>
@@ -194,7 +208,7 @@
         <!-- 基础字段 -->
         create_time, update_time,
         <!-- 业务字段 -->
-        language_code, region_code, code, name, description,
+        language_code, region_code, code, name, description, sort_index,
         <!-- version字段（如果存在） -->
         version
         FROM locale_setting
@@ -209,7 +223,7 @@
         <!-- 基础字段 -->
         create_time, update_time,
         <!-- 业务字段 -->
-        language_code, region_code, code, name, description,
+        language_code, region_code, code, name, description, sort_index,
         <!-- version字段（如果存在） -->
         version
         FROM locale_setting
@@ -265,7 +279,10 @@
             <if test="description != null">
                 AND description = #{description, jdbcType=VARCHAR}
             </if>
+            <if test="sortIndex != null">
+                AND sort_index = #{sortIndex, jdbcType=INTEGER}
+            </if>
         </where>
-        <include refid="dynamicOrderBy"/>
+        ORDER BY sort_index ASC, id ASC
     </select>
 </mapper>

@@ -13,7 +13,9 @@ import com.g2rain.web.interceptors.annotations.LoginGuard;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.Resource;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,7 +67,7 @@ public class G2rainRaindropController implements G2rainRaindropApi {
      */
     @PostMapping("/save")
     @Operation(summary = "新增或更新全局唯一 ID 记录", description = "新增或更新全局唯一 ID 管理表数据")
-    public Result<Long> save(@RequestBody G2rainRaindropDto dto) {
+    public Result<Long> save(@RequestBody @Validated G2rainRaindropDto dto) {
         return Result.success(g2rainRaindropService.save(dto));
     }
 
@@ -79,5 +81,16 @@ public class G2rainRaindropController implements G2rainRaindropApi {
     @Operation(summary = "删除全局唯一 ID 记录", description = "根据主键删除全局唯一 ID 管理记录")
     public Result<Integer> delete(@Parameter(description = "记录标识") @PathVariable Long id) {
         return Result.success(g2rainRaindropService.delete(id));
+    }
+
+    /**
+     * 查询业务标签字典集合
+     *
+     * @return 受影响的记录行数
+     */
+    @GetMapping("/biz_tag_dict")
+    @Operation(summary = "查询业务标签字典集合", description = "查询业务标签字典集合")
+    public Result<List<String>> bizTagDict() {
+        return Result.success(g2rainRaindropService.bizTagDict());
     }
 }

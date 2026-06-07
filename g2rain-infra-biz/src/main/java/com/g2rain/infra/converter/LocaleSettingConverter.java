@@ -4,6 +4,7 @@ import com.g2rain.common.converter.CommonConverter;
 import com.g2rain.infra.dao.po.LocaleSettingPo;
 import com.g2rain.infra.dto.LocaleSettingDto;
 import com.g2rain.infra.vo.LocaleSettingVo;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -29,6 +30,7 @@ public interface LocaleSettingConverter {
      * Po -> Vo
      * 自动将 createTime 和 updateTime 从 {@link LocalDateTime} 转换为 {@link String}
      */
+    @BeanMapping(ignoreUnmappedSourceProperties = {"languageCode", "regionCode"})
     @Mapping(target = "createTime", source = "createTime", qualifiedByName = "localDateTimeToString")
     @Mapping(target = "updateTime", source = "updateTime", qualifiedByName = "localDateTimeToString")
     LocaleSettingVo po2vo(LocaleSettingPo po);
@@ -39,6 +41,8 @@ public interface LocaleSettingConverter {
      * 忽略 version 字段
      */
     @Mapping(target = "version", ignore = true)
+    @Mapping(target = "languageCode", ignore = true)
+    @Mapping(target = "regionCode", ignore = true)
     @Mapping(target = "createTime", source = "createTime", qualifiedByName = "stringToLocalDateTime")
     @Mapping(target = "updateTime", source = "updateTime", qualifiedByName = "stringToLocalDateTime")
     LocaleSettingPo dto2po(LocaleSettingDto dto);

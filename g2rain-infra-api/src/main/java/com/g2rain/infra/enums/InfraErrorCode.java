@@ -15,7 +15,9 @@ public enum InfraErrorCode implements ErrorCode {
     BIZ_TAG_NOT_FOUND("infra.40004", "业务号段不存在或未初始化"),
     SEGMENT_NOT_READY("infra.40005", "号段资源未准备好"),
     SEGMENT_UPDATE_FAILED("infra.40006", "数据库号段更新失败"),
-    SEGMENT_NOT_FOUND("infra.40007", "数据库号段记录不存在");
+    SEGMENT_NOT_FOUND("infra.40007", "数据库号段记录不存在"),
+    DEL_COMMON_TAG_ILLEGAL("infra.40008", "不允许 COMMON 数据"),
+    DEL_DICT_USAGE_ILLEGAL("infra.40009", "存在字典明细, 不允许删除字典用途");
 
     private final String code;
 

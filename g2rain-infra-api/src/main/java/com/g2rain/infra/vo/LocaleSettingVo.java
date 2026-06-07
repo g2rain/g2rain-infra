@@ -21,19 +21,6 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = true)
 @Schema(description = "地域语言设置 VO")
 public class LocaleSettingVo extends BaseVo {
-
-    /**
-     * 语言编码,如 zh
-     */
-    @Schema(description = "语言编码,如 zh")
-    private String languageCode;
-
-    /**
-     * 国家/地区编码,如 CN
-     */
-    @Schema(description = "国家/地区编码,如 CN")
-    private String regionCode;
-
     /**
      * 区域标识,如 zh-CN
      */
@@ -51,4 +38,10 @@ public class LocaleSettingVo extends BaseVo {
      */
     @Schema(description = "语言描述")
     private String description;
+
+    /**
+     * 业务排序
+     */
+    @Schema(description = "业务排序")
+    private Integer sortIndex;
 }

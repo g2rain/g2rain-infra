@@ -6,6 +6,7 @@ import com.g2rain.common.model.Result;
 import com.g2rain.infra.api.DictionaryItemApi;
 import com.g2rain.infra.dto.DictionaryItemDto;
 import com.g2rain.infra.dto.DictionaryItemSelectDto;
+import com.g2rain.infra.dto.DictionaryLocalizedSelectDto;
 import com.g2rain.infra.dto.DictionaryItemTreeSelectDto;
 import com.g2rain.infra.service.DictionaryItemService;
 import com.g2rain.infra.vo.DictionaryItemTreeVo;
@@ -13,6 +14,7 @@ import com.g2rain.infra.vo.DictionaryItemVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.Resource;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +48,11 @@ public class DictionaryItemController implements DictionaryItemApi {
     }
 
     @Override
+    public Result<List<DictionaryItemVo>> selectLocalizedOptions(DictionaryLocalizedSelectDto selectDto) {
+        return Result.success(dictionaryItemService.selectLocalizedOptions(selectDto));
+    }
+
+    @Override
     public Result<List<DictionaryItemTreeVo>> selectTree(DictionaryItemTreeSelectDto selectDto) {
         return Result.success(dictionaryItemService.selectTree(selectDto));
     }
@@ -58,7 +65,7 @@ public class DictionaryItemController implements DictionaryItemApi {
      */
     @PostMapping("/save")
     @Operation(summary = "新增或更新字典明细", description = "新增或更新字典明细信息")
-    public Result<Long> save(@RequestBody DictionaryItemDto dto) {
+    public Result<Long> save(@RequestBody @Validated DictionaryItemDto dto) {
         return Result.success(dictionaryItemService.save(dto));
     }
 
@@ -73,5 +80,4 @@ public class DictionaryItemController implements DictionaryItemApi {
     public Result<Integer> delete(@Parameter(description = "字典明细标识") @PathVariable Long id) {
         return Result.success(dictionaryItemService.delete(id));
     }
-
 }

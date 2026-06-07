@@ -51,4 +51,10 @@ public class LocaleSettingSelectDto extends BaseSelectListDto {
      */
     @Schema(description = "语言描述")
     private String description;
+
+    /**
+     * 业务排序
+     */
+    @Schema(description = "业务排序")
+    private Integer sortIndex;
 }

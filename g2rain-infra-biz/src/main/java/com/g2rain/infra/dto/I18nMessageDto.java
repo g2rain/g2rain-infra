@@ -2,6 +2,7 @@ package com.g2rain.infra.dto;
 
 import com.g2rain.common.model.BaseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,15 +23,23 @@ import lombok.Setter;
 public class I18nMessageDto extends BaseDto {
 
     /**
-     * 用途标识
+     * 国际化用途编码
      */
-    @Schema(description = "国际化信息用途标识")
-    private Long messageUsageId;
+    @NotBlank
+    @Schema(description = "国际化用途编码", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String messageUsageCode;
+
+    /**
+     * 业务标签
+     */
+    @Schema(description = "业务标签")
+    private String tag;
 
     /**
      * 语言编码,如 zh
      */
-    @Schema(description = "语言编码,如 zh")
+    @NotBlank
+    @Schema(description = "语言编码,如 zh", requiredMode = Schema.RequiredMode.REQUIRED)
     private String languageCode;
 
     /**
@@ -42,13 +51,15 @@ public class I18nMessageDto extends BaseDto {
     /**
      * 国际化消息编码(唯一)
      */
-    @Schema(description = "国际化消息编码(唯一)")
+    @NotBlank
+    @Schema(description = "国际化消息编码(唯一)", requiredMode = Schema.RequiredMode.REQUIRED)
     private String messageCode;
 
     /**
      * 国际化内容文本
      */
-    @Schema(description = "国际化内容文本")
+    @NotBlank
+    @Schema(description = "国际化内容文本", requiredMode = Schema.RequiredMode.REQUIRED)
     private String messageText;
 
     /**

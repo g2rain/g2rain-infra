@@ -7,15 +7,21 @@ import com.g2rain.infra.api.I18nMessageApi;
 import com.g2rain.infra.dto.I18nMessageDto;
 import com.g2rain.infra.dto.I18nMessageSelectDto;
 import com.g2rain.infra.service.I18nMessageService;
+import com.g2rain.infra.vo.I18nLocaleMessageVo;
 import com.g2rain.infra.vo.I18nMessageVo;
+import com.g2rain.infra.vo.I18nMsgUsageVo;
+import com.g2rain.web.interceptors.annotations.LoginGuard;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.Resource;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -51,7 +57,7 @@ public class I18nMessageController implements I18nMessageApi {
      */
     @PostMapping("/save")
     @Operation(summary = "新增或更新国际化信息", description = "新增或更新国际化文案信息")
-    public Result<Long> save(@RequestBody I18nMessageDto dto) {
+    public Result<Long> save(@RequestBody @Validated I18nMessageDto dto) {
         return Result.success(i18nMessageService.save(dto));
     }
 
@@ -65,5 +71,30 @@ public class I18nMessageController implements I18nMessageApi {
     @Operation(summary = "删除国际化信息记录", description = "根据主键删除国际化信息记录")
     public Result<Integer> delete(@Parameter(description = "国际化信息标识") @PathVariable Long id) {
         return Result.success(i18nMessageService.delete(id));
+    }
+
+    @GetMapping("/i18n_message_usages")
+    @Operation(summary = "获取国际化用途集合", description = "获取国际化用途集合")
+    public Result<List<I18nMsgUsageVo>> i18nMessageUsages() {
+        return Result.success(i18nMessageService.i18nMessageUsages());
+    }
+
+    /**
+     * 查询业务标签字典集合
+     *
+     * @return 去重后的业务标签列表
+     */
+    @GetMapping("/tag_dict")
+    @Operation(summary = "查询业务标签字典集合", description = "查询 i18n_message 表中已存在的去重业务标签，供页面选择")
+    public Result<List<String>> tagDict() {
+        return Result.success(i18nMessageService.tagDict());
+    }
+
+    @GetMapping("/locale")
+    @LoginGuard(require = false)
+    @Operation(summary = "根据标签获取页面国际化元素", description = "根据标签获取页面国际化元素")
+    public Result<List<I18nLocaleMessageVo>> i18nMessageLocale(@Parameter(description = "业务标签", required = true) @RequestParam String tags,
+                                                               @Parameter(description = "语言-地区", required = true) @RequestParam String locale) {
+        return Result.success(i18nMessageService.i18nMessageLocale(tags, locale));
     }
 }

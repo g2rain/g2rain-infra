@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 
 /**
  * 国际化信息表查询入参DTO
@@ -23,10 +25,22 @@ import lombok.Setter;
 public class I18nMessageSelectDto extends BaseSelectListDto {
 
     /**
-     * 用途标识
+     * 国际化用途编码
      */
-    @Schema(description = "国际化信息用途标识")
-    private Long messageUsageId;
+    @Schema(description = "国际化用途编码")
+    private String messageUsageCode;
+
+    /**
+     * 业务标签
+     */
+    @Schema(description = "业务标签")
+    private String tag;
+
+    /**
+     * 业务标签集合
+     */
+    @Schema(description = "业务标签集合")
+    private Set<String> tags;
 
     /**
      * 语言编码,如 zh
@@ -41,9 +55,15 @@ public class I18nMessageSelectDto extends BaseSelectListDto {
     private String regionCode;
 
     /**
+     * 是否仅匹配空地区（region_code 为 NULL 或空字符串）
+     */
+    @Schema(hidden = true, description = "是否仅匹配空地区编码")
+    private Boolean matchEmptyRegionCode;
+
+    /**
      * 国际化消息编码(唯一)
      */
-    @Schema(description = "国际化消息编码(唯一)")
+    @Schema(description = "国际化消息编码")
     private String messageCode;
 
     /**

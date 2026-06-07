@@ -1,5 +1,6 @@
 package com.g2rain.infra.service.impl;
 
+import com.g2rain.common.exception.BusinessException;
 import com.g2rain.common.exception.LocalizedErrorMessage;
 import com.g2rain.common.exception.SystemErrorCode;
 import com.g2rain.common.id.IdGenerator;
@@ -11,16 +12,16 @@ import com.g2rain.common.utils.Moments;
 import com.g2rain.common.utils.Strings;
 import com.g2rain.infra.converter.I18nMessageConverter;
 import com.g2rain.infra.dao.I18nMessageDao;
-import com.g2rain.infra.dao.I18nMessageUsageDao;
 import com.g2rain.infra.dao.po.I18nMessagePo;
-import com.g2rain.infra.dao.po.I18nMessageUsagePo;
 import com.g2rain.infra.dto.I18nMessageDto;
 import com.g2rain.infra.dto.I18nMessageSelectDto;
-import com.g2rain.infra.dto.I18nMessageUsageSelectDto;
+import com.g2rain.infra.enums.I18nMsgUsage;
 import com.g2rain.infra.enums.InfraSyncerEnum;
 import com.g2rain.infra.service.I18nMessageService;
 import com.g2rain.infra.utils.Constants;
+import com.g2rain.infra.vo.I18nLocaleMessageVo;
 import com.g2rain.infra.vo.I18nMessageVo;
+import com.g2rain.infra.vo.I18nMsgUsageVo;
 import com.g2rain.mybatis.pagination.PageContext;
 import com.g2rain.mybatis.pagination.model.Page;
 import jakarta.annotation.Resource;
@@ -28,14 +29,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 国际化信息表服务实现类
@@ -49,11 +51,11 @@ public class I18nMessageServiceImpl implements I18nMessageService {
     @Resource(name = "i18nMessageDao")
     private I18nMessageDao i18nMessageDao;
 
-    @Resource(name = "i18nMessageUsageDao")
-    private I18nMessageUsageDao i18nMessageUsageDao;
-
     @Resource
     private EventPublisherHub eventPublisherHub;
+
+    @Resource
+    private ObjectMapper objectMapper;
 
     private IdGenerator idGenerator;
 
@@ -65,12 +67,10 @@ public class I18nMessageServiceImpl implements I18nMessageService {
 
     @Override
     public List<I18nMessageVo> selectList(I18nMessageSelectDto selectDto) {
-        List<I18nMessageVo> result = i18nMessageDao.selectList(selectDto)
+        return i18nMessageDao.selectList(selectDto)
             .stream()
             .map(I18nMessageConverter.INSTANCE::po2vo)
             .toList();
-        fillMessageUsageName(result);
-        return result;
     }
 
     @Override
@@ -83,12 +83,59 @@ public class I18nMessageServiceImpl implements I18nMessageService {
             .stream()
             .map(I18nMessageConverter.INSTANCE::po2vo)
             .toList();
-        fillMessageUsageName(result);
         return PageData.of(page.getPageNum(), page.getPageSize(), page.getTotal(), result);
     }
 
     @Override
     public Long save(I18nMessageDto dto) {
+        // 校验扩展字段是否合法
+        if (Objects.nonNull(dto.getExtendField())) {
+            // 设置 null 不然JSON格式的数据库字段类型会抱错
+            if (dto.getExtendField().isBlank()) {
+                dto.setExtendField(null);
+            } else {
+                // 校验是否为合法的 JSON 格式
+                try {
+                    objectMapper.readTree(dto.getExtendField());
+                } catch (Exception e) {
+                    throw new BusinessException(
+                        SystemErrorCode.PARAM_VAL_INVALID,
+                        "extendField"
+                    );
+                }
+            }
+        }
+
+        I18nMsgUsage i18nMsgUsage = I18nMsgUsage.fromName(dto.getMessageUsageCode());
+        Asserts.isTrue(Objects.nonNull(i18nMsgUsage),
+            SystemErrorCode.PARAM_VAL_INVALID, "messageUsageCode"
+        );
+
+        // 页面文案, 标签必填
+        if (i18nMsgUsage.equals(I18nMsgUsage.UI_MESSAGE)) {
+            Asserts.isTrue(Objects.nonNull(dto.getTag()), SystemErrorCode.PARAM_REQUIRED, "tag");
+        } else {// 非页面文案, 不需要设置标签
+            dto.setTag(null);
+        }
+
+        boolean exists = Arrays.asList(Locale.getAvailableLocales()).contains(
+            new Locale.Builder().setLanguage(dto.getLanguageCode()).setRegion(dto.getRegionCode()).build()
+        );
+        Asserts.isTrue(exists, SystemErrorCode.PARAM_VAL_INVALID, "languageCode or regionCode");
+
+        // 校验国际化信息是否重复
+        I18nMessageSelectDto selectDto = new I18nMessageSelectDto();
+        selectDto.setTag(dto.getTag());
+        selectDto.setLanguageCode(dto.getLanguageCode());
+        selectDto.setMatchEmptyRegionCode(true);
+        selectDto.setRegionCode(dto.getRegionCode());
+        selectDto.setMessageUsageCode(dto.getMessageUsageCode());
+        selectDto.setMessageCode(dto.getMessageCode());
+        List<I18nMessagePo> i18nMessages = i18nMessageDao.selectList(selectDto);
+        if (i18nMessages.stream().anyMatch(o -> !Objects.equals(o.getId(), dto.getId()))) {
+            throw new BusinessException(SystemErrorCode.DATA_EXISTS);
+        }
+
         // 转换DTO为 PO
         I18nMessagePo entity = I18nMessageConverter.INSTANCE.dto2po(dto);
 
@@ -135,64 +182,66 @@ public class I18nMessageServiceImpl implements I18nMessageService {
         // `消息` 不存在
         Asserts.isTrue(Objects.nonNull(entity), SystemErrorCode.PARAM_VAL_INVALID, id);
 
+        // 删除国际化信息
         int total = i18nMessageDao.delete(id);
 
-        // 广播删除错误信息
-        eventPublisherHub.sendDelete(
-            Constants.SYNC_OUTPUT_BINDING,
-            InfraSyncerEnum.ERROR_MSG.name(),
-            toLocalizedErrorMessage(entity)
-        );
+        // 只有错误信息国际化需要推送广播
+        if (I18nMsgUsage.ERROR_CODE.name().equals(entity.getMessageUsageCode())) {
+            eventPublisherHub.sendDelete(
+                Constants.SYNC_OUTPUT_BINDING,
+                InfraSyncerEnum.ERROR_MSG.name(),
+                toLocalizedErrorMessage(entity)
+            );
+        }
 
         return total;
     }
 
+    @Override
+    public List<I18nMsgUsageVo> i18nMessageUsages() {
+        return Arrays.stream(I18nMsgUsage.values())
+            .map(usage -> new I18nMsgUsageVo(usage.name(), usage.getDesc()))
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> tagDict() {
+        return i18nMessageDao.selectAllTags();
+    }
+
+    @Override
+    public List<I18nLocaleMessageVo> i18nMessageLocale(String tags, String locale) {
+        I18nMessageSelectDto selectDto = new I18nMessageSelectDto();
+        selectDto.setMessageUsageCode(I18nMsgUsage.UI_MESSAGE.name());
+        Set<String> tagSet = Arrays.stream(tags.split(","))
+            .map(String::trim)
+            .filter(Strings::isNotBlank)
+            .collect(Collectors.toSet());
+        selectDto.setTags(tagSet);
+        Locale l = Locale.forLanguageTag(locale);
+        selectDto.setLanguageCode(l.getLanguage());
+        selectDto.setRegionCode(l.getCountry());
+        return i18nMessageDao.selectList(selectDto).stream()
+            .map(I18nMessageConverter.INSTANCE::po2locale)
+            .toList();
+    }
+
+    /**
+     * 组装 `国际化错误信息` 广播消息
+     *
+     * @param entity 国际化错误信息
+     * @return `国际化错误信息` 广播消息
+     */
     private LocalizedErrorMessage toLocalizedErrorMessage(I18nMessagePo entity) {
+        String locale = new Locale.Builder()
+            .setLanguage(entity.getLanguageCode())
+            .setRegion(entity.getRegionCode())
+            .build()
+            .toLanguageTag();
         LocalizedErrorMessage msg = new LocalizedErrorMessage();
         msg.setErrorCode(entity.getMessageCode());
-        String locale = entity.getLanguageCode();
-        String region = entity.getRegionCode();
-        if (Strings.isNotBlank(region)) {
-            locale = locale + "_" + region;
-        }
-
         msg.setLocale(locale);
         msg.setMessageTemplate(entity.getMessageText());
         return msg;
-    }
-
-
-    private void fillMessageUsageName(List<I18nMessageVo> list) {
-        if (list == null || list.isEmpty()) {
-            return;
-        }
-        Map<Long, String> usageNameById = HashMap.newHashMap(list.size());
-        Set<Long> missingUsageIds = new HashSet<>();
-        for (I18nMessageVo item : list) {
-            Long messageUsageId = item.getMessageUsageId();
-            if (messageUsageId != null && messageUsageId != 0L) {
-                missingUsageIds.add(messageUsageId);
-            } else {
-                item.setMessageUsageName(null);
-            }
-        }
-        if (!missingUsageIds.isEmpty()) {
-            I18nMessageUsageSelectDto usageQuery = new I18nMessageUsageSelectDto();
-            usageQuery.setIds(missingUsageIds);
-            List<I18nMessageUsagePo> usageList = i18nMessageUsageDao.selectList(usageQuery);
-            for (I18nMessageUsagePo usage : usageList) {
-                usageNameById.put(usage.getId(), usage.getName());
-            }
-            for (Long missingUsageId : missingUsageIds) {
-                usageNameById.putIfAbsent(missingUsageId, null);
-            }
-        }
-        for (I18nMessageVo item : list) {
-            Long messageUsageId = item.getMessageUsageId();
-            if (messageUsageId == null || messageUsageId == 0L) {
-                continue;
-            }
-            item.setMessageUsageName(usageNameById.get(messageUsageId));
-        }
     }
 }

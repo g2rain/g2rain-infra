@@ -3,6 +3,7 @@ package com.g2rain.infra.converter;
 import com.g2rain.common.converter.CommonConverter;
 import com.g2rain.infra.dao.po.I18nMessagePo;
 import com.g2rain.infra.dto.I18nMessageDto;
+import com.g2rain.infra.vo.I18nLocaleMessageVo;
 import com.g2rain.infra.vo.I18nMessageVo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -29,10 +30,14 @@ public interface I18nMessageConverter {
      * Po -> Vo
      * 自动将 createTime 和 updateTime 从 {@link LocalDateTime} 转换为 {@link String}
      */
-    @Mapping(target = "messageUsageName", ignore = true)
     @Mapping(target = "createTime", source = "createTime", qualifiedByName = "localDateTimeToString")
     @Mapping(target = "updateTime", source = "updateTime", qualifiedByName = "localDateTimeToString")
     I18nMessageVo po2vo(I18nMessagePo po);
+
+    /**
+     * I18nMessagePo -> I18nLocaleMessageVo
+     */
+    I18nLocaleMessageVo po2locale(I18nMessagePo po);
 
     /**
      * Dto -> Po

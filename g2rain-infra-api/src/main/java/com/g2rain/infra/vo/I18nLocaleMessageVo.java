@@ -1,8 +1,6 @@
 package com.g2rain.infra.vo;
 
-import com.g2rain.common.model.BaseVo;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,33 +16,8 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@Schema(description = "国际化信息 VO")
-public class I18nMessageVo extends BaseVo {
-
-    /**
-     * 国际化用途编码
-     */
-    @Schema(description = "国际化用途编码")
-    private String messageUsageCode;
-
-    /**
-     * 业务标签
-     */
-    @Schema(description = "业务标签")
-    private String tag;
-
-    /**
-     * 语言编码,如 zh
-     */
-    @Schema(description = "语言编码,如 zh")
-    private String languageCode;
-
-    /**
-     * 国家/地区编码,如 CN
-     */
-    @Schema(description = "国家/地区编码,如 CN")
-    private String regionCode;
+@Schema(description = "本地国际化信息 VO")
+public class I18nLocaleMessageVo {
 
     /**
      * 国际化消息编码(唯一)
