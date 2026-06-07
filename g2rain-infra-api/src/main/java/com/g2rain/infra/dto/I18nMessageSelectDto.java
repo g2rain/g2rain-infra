@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 
 /**
  * 国际化信息表查询入参DTO
@@ -33,6 +35,12 @@ public class I18nMessageSelectDto extends BaseSelectListDto {
      */
     @Schema(description = "业务标签")
     private String tag;
+
+    /**
+     * 业务标签集合
+     */
+    @Schema(description = "业务标签集合")
+    private Set<String> tags;
 
     /**
      * 语言编码,如 zh

@@ -9,6 +9,7 @@ import com.g2rain.common.model.PageSelectListDto;
 import com.g2rain.common.syncer.EventPublisherHub;
 import com.g2rain.common.utils.Asserts;
 import com.g2rain.common.utils.Moments;
+import com.g2rain.common.utils.Strings;
 import com.g2rain.infra.converter.I18nMessageConverter;
 import com.g2rain.infra.dao.I18nMessageDao;
 import com.g2rain.infra.dao.po.I18nMessagePo;
@@ -35,6 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -208,10 +210,14 @@ public class I18nMessageServiceImpl implements I18nMessageService {
     }
 
     @Override
-    public List<I18nLocaleMessageVo> i18nMessageLocale(String tag, String locale) {
+    public List<I18nLocaleMessageVo> i18nMessageLocale(String tags, String locale) {
         I18nMessageSelectDto selectDto = new I18nMessageSelectDto();
         selectDto.setMessageUsageCode(I18nMsgUsage.UI_MESSAGE.name());
-        selectDto.setTag(tag);
+        Set<String> tagSet = Arrays.stream(tags.split(","))
+            .map(String::trim)
+            .filter(Strings::isNotBlank)
+            .collect(Collectors.toSet());
+        selectDto.setTags(tagSet);
         Locale l = Locale.forLanguageTag(locale);
         selectDto.setLanguageCode(l.getLanguage());
         selectDto.setRegionCode(l.getCountry());

@@ -93,8 +93,8 @@ public class I18nMessageController implements I18nMessageApi {
     @GetMapping("/locale")
     @LoginGuard(require = false)
     @Operation(summary = "根据标签获取页面国际化元素", description = "根据标签获取页面国际化元素")
-    public Result<List<I18nLocaleMessageVo>> i18nMessageLocale(@Parameter(description = "业务标签", required = true) @RequestParam String tag,
+    public Result<List<I18nLocaleMessageVo>> i18nMessageLocale(@Parameter(description = "业务标签", required = true) @RequestParam String tags,
                                                                @Parameter(description = "语言-地区", required = true) @RequestParam String locale) {
-        return Result.success(i18nMessageService.i18nMessageLocale(tag, locale));
+        return Result.success(i18nMessageService.i18nMessageLocale(tags, locale));
     }
 }
