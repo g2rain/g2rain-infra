@@ -1,6 +1,8 @@
-﻿# g2rain-infra
+﻿<p align="center">
+  <img src="https://github.com/g2rain.png" alt="G2Rain" width="180" />
+</p>
 
-## 1. 徽标与状态标识
+# g2rain-infra
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Java](https://img.shields.io/badge/Java-25-437291?logo=openjdk&logoColor=white)](https://openjdk.org/)
@@ -8,243 +10,167 @@
 [![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-2025.1.1-586069?logo=spring&logoColor=white)](https://spring.io/projects/spring-cloud)
 [![Maven](https://img.shields.io/badge/build-Maven-C71A36?logo=apachemaven&logoColor=white)](https://maven.apache.org/)
 
-## 2. 项目简介
+下一代AI软件开发范式，AI原生Agent平台，开源的企业级SaaS底座。
 
-`g2rain-infra` 是 G2rain 平台中的基础元数据与通用支撑服务，负责提供字典、国际化、语言地区配置、全局 ID 分配与基础同步等平台公共能力。
+平台基础设施元数据服务，提供字典、国际化、地区语言、动态路由与分布式发号器等通用能力；为网关、平台应用与业务服务提供统一基础配置来源
 
-## 3. 平台定位
+[官网](https://www.g2rain.com) · [Issues](https://github.com/g2rain/g2rain/issues) · [Discussions](https://github.com/g2rain/g2rain/discussions)
 
-在 G2rain“企业级 AI 原生开源 SaaS 平台”体系中，`g2rain-infra` 位于平台核心服务层，是平台公共元数据与基础运行支撑的重要承载服务。
+## 目录
 
-它主要服务以下场景：
-- 为主壳、子应用与平台控制台提供统一字典、国际化与语言地区基础数据
-- 为平台后端服务提供全局 ID 分配与运行时节点协调能力
-- 为平台统一缓存同步与配置治理提供消息通道与基础设施接入能力
-- 为多模块工程化演进提供稳定的契约层、实现层与启动层结构
+- 项目简介
+- 平台定位
+- 业务域说明
+- 功能概览
+- 技术栈
+- 环境要求
+- 快速开始
+- 构建与镜像
+- 模块说明
+- 职责边界
+- 主要 HTTP 路径
+- 关联仓库
+- 参与贡献
+- 许可证
+- 联系我们
+- 致谢
 
-它与 `g2rain-basis`、`g2rain-iam`、`g2rain-main-shell`、`g2rain-gateway-webmvc`、`g2rain-gateway-webflux` 等仓库协同，共同构成平台治理、身份、安全与公共基础能力底座。
+## 项目简介
 
-## 4. 核心能力
+平台基础设施元数据服务，提供字典、国际化、地区语言、动态路由与分布式发号器等通用能力；为网关、平台应用与业务服务提供统一基础配置来源
 
-本章回答“这个仓库在平台里提供什么能力、解决什么问题”。
+## 平台定位
 
-- 字典与用途治理能力：解决平台各业务域如何共享稳定字典、选项集与树形字典的问题，通过 `DictionaryUsage*`、`DictionaryItem*` 相关接口与实现沉淀统一字典治理能力。
-- 国际化消息与页面文案能力：解决平台多语言文案如何统一维护、按标签与地区拉取以及变更同步的问题，通过 `I18nMessage*` 能力沉淀国际化治理入口。
-- 语言地区标准化能力：解决语言与地区配置如何统一校验、统一编码与统一输出的问题，通过 `LocaleSetting*` 能力为前端和服务侧提供稳定地区语言数据。
-- 全局 ID 分配能力：解决平台多服务场景下业务主键与全局唯一 ID 如何统一生成的问题，通过 `G2rainRaindrop*`、`SegmentKeysmith`、`SnowflakeKeysmith` 提供两类分配策略。
-- 运行时节点协调能力：解决 Snowflake 模式下多实例 `workerId` 如何安全抢占、续租与失效恢复的问题，通过 `RedisWorkerIdManager` 与 Redis Lua 脚本完成分布式协调。
-- 基础同步与工程化支撑能力：解决公共元数据变更如何广播、工程如何持续生成和演进的问题，通过 Stream 输出通道、`codegen.properties` 与 `g2rain-crafter` 提供同步与工程化支撑。
+该仓库位于 g2rain 后端平台链路中，承担“后端基础服务”的角色。
 
-## 5. 技术栈
+## 业务域说明
 
-- 语言与运行时：`Java 25`
-- 后端框架：`Spring Boot 4.0.5`、`Spring Cloud 2025.1.1`、`Spring Cloud Alibaba Nacos`
-- 持久化：`MyBatis`、`MySQL`
-- 缓存与协调：`Redis`
-- 消息与同步：`Spring Cloud Stream`（Redis Binder）
-- 对象转换：`MapStruct`
-- 文档与治理：`springdoc-openapi`
-- 工程化：`g2rain-crafter`
-- 构建与交付：`Maven`、`Jib`、`Dockerfile`、`build.sh`
+该仓库聚焦于 `平台基础设施管理`。
 
-## 6. 快速开始
+核心对象包括：
+- 应用
 
-### 环境要求
+## 功能概览
 
-- `JDK 25`
-- `Maven 3.9+`
-- 可用的 `MySQL`
-- 可用的 `Redis`
-- 可用的 `Nacos`
+| 能力 | 说明 |
+| --- | --- |
+| 字典管理 | 维护字典用途、字典项及其本地化选项。 |
+| 国际化管理 | 维护地区语言配置与多语言消息资源。 |
+| 动态路由元数据 | 集中维护网关可消费的服务路由定义。 |
+| 分布式发号器 | 提供平台统一编号与分布式 ID 生成能力。 |
 
-### 关键配置
+## 技术栈
 
-当前仓库的关键运行配置主要来自 `g2rain-infra-startup/src/main/resources/application.yml` 与 Nacos 配置中心。
+| 类别 | 说明 |
+| --- | --- |
+| 运行时 | Java 25、Spring Boot 4.0.5、Spring Cloud 2025.1.1 |
+| 安全与令牌 | g2rain-starter-aegis-core |
+| 基础设施 | Redis、Nacos |
+| 其他 | Lombok |
 
-| 变量名 | 说明 | 典型用途 |
+## 环境要求
+
+- JDK 25+
+- Maven 3.9+
+- Redis
+- Nacos
+
+## 快速开始
+
+| 步骤 | 命令或位置 | 说明 |
 | --- | --- | --- |
-| `SERVER_PORT` | 服务端口 | 默认 `8080` |
-| `SPRING_PROFILES_ACTIVE` | 启动环境 | 区分 `dev` 等 profile |
-| `NACOS_SERVER_ADDR` | Nacos 地址 | 服务发现与配置中心 |
-| `SPRING_CLOUD_NACOS_DISCOVERY_*` | 注册中心认证与命名空间 | 服务注册 |
-| `SPRING_CLOUD_NACOS_CONFIG_*` | 配置中心认证与命名空间 | 外部配置拉取 |
+| 准备运行环境 | JDK 25+、Maven 3.9+、Redis、Nacos | 后端服务启动前需要准备 Java 构建环境和平台依赖的基础设施。 |
+| 调整配置 | `src/main/resources/application.yml` | 按需设置 SERVER_PORT、SPRING_PROFILES_ACTIVE、NACOS_SERVER_ADDR 等环境变量。 |
+| 构建项目 | `mvn clean package` | 执行 Maven 构建并生成可执行 Jar。 |
+| 本地启动 | `mvn spring-boot:run` | 以当前 profile 启动服务，默认端口以 application.yml 中的 SERVER_PORT 为准。 |
 
-建议：
-- 生产环境优先通过 Nacos 或安全配置中心维护数据库、Redis、Nacos 凭据。
-- `scripts/g2rain-infra.sql` 应作为初始化脚本统一纳入部署流程。
-- `codegen.properties` 与数据库表结构应保持一致，避免工程化输出与实际实现脱节。
+版本号以项目构建配置为准，当前识别为 `1.0.0`。
 
-### 本地构建
+## 构建与镜像
 
-```bash
-mvn clean install -DskipTests
-```
+| 目标 | 命令 | 产物 | 说明 |
+| --- | --- | --- | --- |
+| 可执行 Jar | `mvn clean package` | `g2rain-infra-1.0.0.jar` | 执行 Maven 标准构建，生成服务可执行产物。 |
+| 本地运行 | `mvn spring-boot:run` | 本地 Spring Boot 进程 | 使用当前 profile 启动服务，便于本地联调。 |
+| 构建脚本 | `./build.sh` | 脚本定义的构建结果 | 仓库提供 build.sh，可承载组织内约定的镜像或发布流程。 |
 
-### 本地运行
+## 模块说明
 
-```bash
-mvn -pl g2rain-infra-startup -am spring-boot:run
-```
+| 模块 | 职责说明 | 代码线索 |
+| --- | --- | --- |
+| g2rain-infra-api | 定义字典、国际化、路由与发号器 API 契约。 | g2rain-infra-api |
+| g2rain-infra-biz | 实现平台基础设施元数据管理业务。 | g2rain-infra-biz |
+| g2rain-infra-startup | 提供 Spring Boot 启动入口与运行配置。 | g2rain-infra-startup |
 
-或：
+## 职责边界
 
-```bash
-java -jar g2rain-infra-startup/target/g2rain-infra-startup-1.0.0.jar
-```
+该仓库主要负责：
+- 负责对应平台基础领域的 API、业务规则、数据持久化与运行时服务
+- 负责向网关、IAM、平台应用或业务服务提供可复用的基础能力
 
-### 镜像构建
+该仓库默认不负责：
+- 不负责具体业务域的产品流程和业务前端实现
+- 不替代网关统一入口、IAM 认证协议或部署编排职责
 
-```bash
-./build.sh
-./build.sh latest
-```
+## 主要 HTTP 路径
 
-或：
+| 方法 | 路径 | 说明 |
+| --- | --- | --- |
+| DELETE | /dictionary_item/{id} | 对外暴露的服务接口 |
+| DELETE | /dictionary_usage/{id} | 对外暴露的服务接口 |
+| DELETE | /g2rain_raindrop/{id} | 对外暴露的服务接口 |
+| DELETE | /i18n_message/{id} | 对外暴露的服务接口 |
+| DELETE | /locale_setting/{id} | 对外暴露的服务接口 |
+| GET | /abc | 对外暴露的服务接口 |
+| GET | /business | 对外暴露的服务接口 |
+| GET | /g2rain_raindrop/biz_tag_dict | 对外暴露的服务接口 |
+| GET | /i18n_message/i18n_message_usages | 对外暴露的服务接口 |
+| GET | /i18n_message/locale | 对外暴露的服务接口 |
+| GET | /i18n_message/tag_dict | 对外暴露的服务接口 |
+| GET | /list | 对外暴露的服务接口 |
+| GET | /locale_setting/code_name_map | 对外暴露的服务接口 |
+| GET | /locale_setting/get_language_countries | 对外暴露的服务接口 |
+| GET | /locale_setting/locale_dict | 对外暴露的服务接口 |
+| GET | /localized_options | 对外暴露的服务接口 |
+| GET | /page | 对外暴露的服务接口 |
+| GET | /snowflake | 对外暴露的服务接口 |
+| GET | /tree | 对外暴露的服务接口 |
+| POST | /dictionary_item/save | 对外暴露的服务接口 |
+| POST | /dictionary_usage/save | 对外暴露的服务接口 |
+| POST | /g2rain_raindrop/save | 对外暴露的服务接口 |
+| POST | /i18n_message/save | 对外暴露的服务接口 |
+| POST | /locale_setting/save | 对外暴露的服务接口 |
 
-```bash
-mvn -pl g2rain-infra-startup -am compile jib:dockerBuild
-```
+## 关联仓库
 
-## 7. 项目结构
+| 仓库 | 协作关系 |
+| --- | --- |
+| g2rain-common | 复用平台公共规范、通用模型、工具能力或基础依赖约束。 |
 
-本章回答“代码与模块是如何组织的、排查和扩展时应该先看哪里”。
+## 参与贡献
 
-```text
-g2rain-infra/
-├── codegen.properties
-├── build.sh
-├── scripts/
-│   └── g2rain-infra.sql
-├── g2rain-infra-api/
-├── g2rain-infra-biz/
-└── g2rain-infra-startup/
-```
+我们欢迎所有形式的贡献：Issue 反馈、文档改进、功能建议与代码提交。
 
-### 结构说明
+推荐流程：
 
-- `g2rain-infra-api/`：承载对外 API 契约、DTO、VO、枚举与错误码，是调用方对接的稳定接口层。
-- `g2rain-infra-biz/`：承载控制器、服务、DAO、MapStruct 转换器、运行时组件与业务实现，是仓库核心领域逻辑所在。
-- `g2rain-infra-startup/`：承载 Spring Boot 启动入口、Nacos 接入、Stream 配置、虚拟线程、参数解析与运行时装配。
-- `scripts/g2rain-infra.sql`：承载数据库初始化结构与基础数据，是部署与本地落库的重要入口。
-- `codegen.properties`：承载代码生成配置，是多模块工程化演进的重要支撑文件。
-- `build.sh`：承载仓库默认镜像交付入口，会先整仓构建再进入启动模块执行 Jib。
+1. Fork 本仓库。
+2. 创建特性分支：`git checkout -b feature/your-feature-name`。
+3. 提交更改：`git commit -m "Add some feature"`。
+4. 推送分支：`git push origin feature/your-feature-name`。
+5. 提交 Pull Request。
 
-### 代码查阅指引
+代码贡献前请尽量补充必要的测试和文档，并确保构建、测试与静态检查通过。
 
-- 查看字典能力时，优先看 `DictionaryUsage*`、`DictionaryItem*` 与对应 `ServiceImpl`。
-- 查看国际化能力时，优先看 `I18nMessage*` 与同步相关实现。
-- 查看语言地区能力时，优先看 `LocaleSetting*`。
-- 查看全局 ID 能力时，优先看 `G2rainRaindrop*`、`SegmentKeysmith`、`SnowflakeKeysmith`。
-- 查看 Snowflake 运行协调时，优先看 `RedisWorkerIdManager`。
-- 查看运行期装配与配置接入时，优先看 `g2rain-infra-startup` 下的 `Application`、`ArgumentResolverConfig`、`VirtualThreadConfigurer` 与 `application.yml`。
+## 许可证
 
-## 8. 核心业务流程
+本项目基于 [Apache 2.0许可证](https://github.com/g2rain/g2rain-common/blob/main/LICENSE) 开源。
 
-本章回答“这些能力在运行时是如何串起来工作的”。
+## 联系我们
 
-#### 1. 标准元数据服务主线
+- Issues: [GitHub Issues](https://github.com/g2rain/g2rain/issues)
+- 讨论: [GitHub Discussions](https://github.com/g2rain/g2rain/discussions)
+- 邮箱: g2rain_developer@163.com
 
-- 外部调用方先通过 `g2rain-infra-api` 契约访问平台基础能力接口。
-- `controller` 实现统一 HTTP 入口，`service/impl` 承接校验、组装与业务逻辑。
-- 最终由 `dao + mybatis mapper` 落到 MySQL，输出稳定元数据或管理结果。
-- 这一主线保证了 API 契约、领域实现与运行时装配三层边界长期稳定。
+## 致谢
 
-#### 2. 字典能力主线
-
-- `DictionaryItemController` 提供列表、分页、树形结构与本地化选项等接口。
-- `DictionaryItemServiceImpl` 会校验用途编码、唯一性与父子关系，再补齐父节点展示信息。
-- 树形接口会按 `parentId` 在内存中组装并排序，形成统一树形输出。
-- 这一主线解决的是平台多业务域共享字典与选项集的统一治理问题。
-
-#### 3. 国际化与同步主线
-
-- `I18nMessageController` 提供国际化消息维护、标签字典与页面文案拉取能力。
-- `I18nMessageServiceImpl` 校验用途、标签、语言地区与扩展字段，再完成保存或查询。
-- 变更时通过 Stream 输出通道把同步事件发送到 `g2rain-syncer`。
-- 这一主线解决的是多服务之间国际化消息一致性与变更广播问题。
-
-#### 4. 语言地区主线
-
-- `LocaleSettingServiceImpl` 启动时先构建 JVM 可用语言地区字典。
-- 保存配置时校验 `code` 合法性，并拆解为 `languageCode` 与 `regionCode`。
-- 最终对外输出 `localeDict`、`languageCountries`、`code2name` 等支撑数据。
-- 这一主线解决的是平台语言地区配置标准化与复用问题。
-
-#### 5. 全局 ID 分配主线
-
-- `G2rainRaindropServiceImpl` 维护业务标签与分配策略入口。
-- 系统根据 `KeysmithType` 路由到 `SegmentKeysmith` 或 `SnowflakeKeysmith`。
-- `SegmentKeysmith` 负责数据库号段预分配、双缓冲切换与高并发连续取号。
-- `SnowflakeKeysmith` 负责时间戳、`workerId` 与序列号组合生成全局唯一 ID。
-- 这一主线解决的是平台不同场景下统一 ID 分配策略的问题。
-
-#### 6. Snowflake 节点协调主线
-
-- `SnowflakeKeysmith` 启动时先通过 `RedisWorkerIdManager` 抢占 `workerId`。
-- `RedisWorkerIdManager` 基于 Redis Lua 脚本完成原子分配、续租与释放。
-- 若续租连续失败超过阈值，系统会标记当前 `workerId` 失效并尝试重新申请。
-- 这一主线解决的是多实例 Snowflake 场景下节点标识冲突与失效恢复问题。
-
-## 9. 常用命令
-
-```bash
-mvn clean install
-mvn -pl g2rain-infra-startup -am spring-boot:run
-mvn -pl g2rain-infra-startup -am compile jib:dockerBuild
-./build.sh
-./build.sh latest
-```
-
-## 10. 质量与测试
-
-- 当前扫描未发现 `src/test/java` 测试源码。
-- 建议后续优先补齐字典树组装、国际化同步、Segment 号段切换、Snowflake 时钟回拨与续租失效等关键链路测试。
-- 当前仓库工程结构较稳定，但运行机制型代码较多，回归测试价值较高。
-
-## 11. 相关仓库
-
-- `g2rain-basis`：平台应用、资源、角色与权限治理底座
-- `g2rain-iam`：统一身份认证与令牌服务
-- `g2rain-main-shell`：主壳与统一交互入口
-- `g2rain-gateway-webmvc`：网关与接入安全协同实现之一
-- `g2rain-gateway-webflux`：网关与接入安全协同实现之一
-
-## 12. 使用建议
-
-- 适合作为平台统一基础元数据与基础支撑服务独立部署，而不是拆散到业务服务内各自维护。
-- 适合为控制台、网关和业务服务统一提供字典、国际化、语言地区与 ID 分配能力。
-- 生产环境请将 MySQL、Redis、Nacos 凭据统一托管在安全配置中心。
-- 对于 `scripts/g2rain-infra.sql` 和 `codegen.properties`，建议在交付与演进流程中明确纳入版本管理与变更评审。
-
-## 13. 贡献指南
-
-欢迎通过文档改进、Issue 反馈、测试补充、代码优化、功能增强等形式参与贡献。
-
-建议流程：
-1. Fork 本仓库
-2. 创建特性分支
-3. 提交修改
-4. 推送分支
-5. 提交 Pull Request
-
-提交前请尽量确保：
-- 遵循现有技术栈与代码规范
-- 更新相关文档
-- 如涉及关键流程，补充必要测试
-
-## 14. 许可证
-
-本项目基于 [Apache 2.0许可证](LICENSE) 开源。
-
-## 15. 联系我们
-
-- **站点**: https://www.g2rain.com/
-- **Issues**: [GitHub Issues](https://github.com/g2rain/g2rain/issues)
-- **讨论**: [GitHub Discussions](https://github.com/g2rain/g2rain/discussions)
-- **邮箱**: g2rain_developer@163.com
-
-## 16. 致谢
-
-感谢所有为这个项目做出贡献的开发者们。
-
-如果这个项目对您有帮助，欢迎 Star 支持。
+感谢所有为 g2rain 项目提交 Issue、代码、文档、建议和使用反馈的开发者们！
