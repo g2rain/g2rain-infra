@@ -1,172 +1,176 @@
-# G2rain Infra
+﻿<p align="center">
+  <img src="https://github.com/g2rain.png" alt="G2Rain" width="180" />
+</p>
+
+# g2rain-infra
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Java](https://img.shields.io/badge/Java-25-437291?logo=openjdk&logoColor=white)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.5-6DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-2025.1.1-586069?logo=spring&logoColor=white)](https://spring.io/projects/spring-cloud)
 [![Maven](https://img.shields.io/badge/build-Maven-C71A36?logo=apachemaven&logoColor=white)](https://maven.apache.org/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#参与贡献)
 
-面向可扩展 SaaS 体系的**基础支撑服务**：提供字典、国际化、区域与语言、路由定义、分布式 ID（号段/雪花等）等通用能力，并与 Nacos、Redis 等基础设施集成，便于业务微服务统一接入。
+下一代AI软件开发范式，AI原生Agent平台，开源的企业级SaaS底座。
 
-本项目由 **[谷雨开源](https://g2rain.com)**（G2Rain）社区维护，采用 **Apache License 2.0** 开源协议发布。
+平台基础设施元数据服务，提供字典、国际化、地区语言、动态路由与分布式发号器等通用能力；为网关、平台应用与业务服务提供统一基础配置来源
 
----
+[官网](https://www.g2rain.com) · [Issues](https://github.com/g2rain/g2rain/issues) · [Discussions](https://github.com/g2rain/g2rain/discussions)
 
 ## 目录
 
-- [功能特性](#功能特性)
-- [技术栈](#技术栈)
-- [模块结构](#模块结构)
-- [环境要求](#环境要求)
-- [快速开始](#快速开始)
-- [配置说明](#配置说明)
-- [容器镜像](#容器镜像)
-- [参与贡献](#参与贡献)
-- [许可证](#许可证)
+- 项目简介
+- 平台定位
+- 业务域说明
+- 功能概览
+- 技术栈
+- 环境要求
+- 快速开始
+- 构建与镜像
+- 模块说明
+- 职责边界
+- 主要 HTTP 路径
+- 关联仓库
+- 参与贡献
+- 许可证
+- 联系我们
+- 致谢
 
----
+## 项目简介
 
-## 功能特性
+平台基础设施元数据服务，提供字典、国际化、地区语言、动态路由与分布式发号器等通用能力；为网关、平台应用与业务服务提供统一基础配置来源
 
-- **字典与引用**：字典项、字典使用关系维护与查询。
-- **国际化**：多语言文案及使用关系管理。
-- **区域与语言**：语言区域（Locale）相关配置。
-- **路由定义**：集中维护路由类元数据，供网关或业务侧消费。
-- **Raindrop / ID 能力**：与号段、雪花等 ID 生成策略相关的支撑逻辑（具体行为以接口与实现为准）。
-- **服务治理**：集成 **Nacos** 服务发现与动态配置；支持从 Nacos 导入 `g2rain-infra.yml` 等外部化配置。
-- **消息与同步**：基于 **Spring Cloud Stream**（Redis Binder）输出到 `g2rain-syncer` 通道，配合缓存同步等场景。
-- **可观测性**：Spring Boot **Actuator**（`health`、`info`）；集成 **springdoc-openapi** 便于联调与文档生成。
+## 平台定位
 
----
+该仓库位于 g2rain 后端平台链路中，承担“后端基础服务”的角色。
+
+## 业务域说明
+
+该仓库聚焦于 `平台基础设施管理`。
+
+核心对象包括：
+- 应用
+
+## 功能概览
+
+| 能力 | 说明 |
+| --- | --- |
+| 字典管理 | 维护字典用途、字典项及其本地化选项。 |
+| 国际化管理 | 维护地区语言配置与多语言消息资源。 |
+| 动态路由元数据 | 集中维护网关可消费的服务路由定义。 |
+| 分布式发号器 | 提供平台统一编号与分布式 ID 生成能力。 |
 
 ## 技术栈
 
 | 类别 | 说明 |
-|------|------|
-| 运行时 | Java **25** |
-| 框架 | **Spring Boot** 4.0.x、**Spring Cloud** 2025.1.x、**Spring Cloud Alibaba (Nacos)** |
-| 持久化 | **MyBatis**、**MySQL** |
-| 缓存 / 消息 | **Redis**、**Spring Cloud Stream**（Redis） |
-| 其他 | **MapStruct**、**Lombok**、**springdoc-openapi** |
-
-> 工程还依赖若干 `com.g2rain` 内部 Starter（如安全、Redis 封装、分页、缓存同步等）。若你在本地从零构建，需配置可解析这些构件的 **Maven 仓库**（或由社区提供 BOM / 公开坐标后再构建）。欢迎通过 Issue 反馈「仅开源本仓库时的最小可构建方案」需求。
-
----
-
-## 模块结构
-
-```
-g2rain-infra/
-├── g2rain-infra-api/      # 对外契约：API 接口、DTO/VO、枚举、错误码等
-├── g2rain-infra-biz/      # 业务实现：Controller、Service、DAO、MyBatis Mapper
-└── g2rain-infra-startup/  # 可执行应用：Spring Boot 入口、全局配置、OpenAPI 等
-```
-
----
+| --- | --- |
+| 运行时 | Java 25、Spring Boot 4.0.5、Spring Cloud 2025.1.1 |
+| 安全与令牌 | g2rain-starter-aegis-core |
+| 基础设施 | Redis、Nacos |
+| 其他 | Lombok |
 
 ## 环境要求
 
-- **JDK 25**（与 `maven.compiler.release` 一致）
-- **Apache Maven 3.9+**（推荐）
-- 运行期依赖：**MySQL**、**Redis**、**Nacos**（按 `application.yml` 与实际部署启用）
-
----
+- JDK 25+
+- Maven 3.9+
+- Redis
+- Nacos
 
 ## 快速开始
 
-### 1. 克隆仓库
+| 步骤 | 命令或位置 | 说明 |
+| --- | --- | --- |
+| 准备运行环境 | JDK 25+、Maven 3.9+、Redis、Nacos | 后端服务启动前需要准备 Java 构建环境和平台依赖的基础设施。 |
+| 调整配置 | `src/main/resources/application.yml` | 按需设置 SERVER_PORT、SPRING_PROFILES_ACTIVE、NACOS_SERVER_ADDR 等环境变量。 |
+| 构建项目 | `mvn clean package` | 执行 Maven 构建并生成可执行 Jar。 |
+| 本地启动 | `mvn spring-boot:run` | 以当前 profile 启动服务，默认端口以 application.yml 中的 SERVER_PORT 为准。 |
 
-```bash
-git clone <你的仓库克隆地址>
-cd g2rain-infra
-```
+版本号以项目构建配置为准，当前识别为 `1.0.0`。
 
-### 2. 编译
+## 构建与镜像
 
-```bash
-mvn clean package -DskipTests
-```
+| 目标 | 命令 | 产物 | 说明 |
+| --- | --- | --- | --- |
+| 可执行 Jar | `mvn clean package` | `g2rain-infra-1.0.0.jar` | 执行 Maven 标准构建，生成服务可执行产物。 |
+| 本地运行 | `mvn spring-boot:run` | 本地 Spring Boot 进程 | 使用当前 profile 启动服务，便于本地联调。 |
+| 构建脚本 | `./build.sh` | 脚本定义的构建结果 | 仓库提供 build.sh，可承载组织内约定的镜像或发布流程。 |
 
-### 3. 运行
+## 模块说明
 
-在具备数据库、Redis、Nacos 等依赖的前提下，启动可执行模块：
+| 模块 | 职责说明 | 代码线索 |
+| --- | --- | --- |
+| g2rain-infra-api | 定义字典、国际化、路由与发号器 API 契约。 | g2rain-infra-api |
+| g2rain-infra-biz | 实现平台基础设施元数据管理业务。 | g2rain-infra-biz |
+| g2rain-infra-startup | 提供 Spring Boot 启动入口与运行配置。 | g2rain-infra-startup |
 
-```bash
-java -jar g2rain-infra-startup/target/g2rain-infra-startup-*.jar
-```
+## 职责边界
 
-或通过 Spring Boot 插件在 `g2rain-infra-startup` 模块目录下：
+该仓库主要负责：
+- 负责对应平台基础领域的 API、业务规则、数据持久化与运行时服务
+- 负责向网关、IAM、平台应用或业务服务提供可复用的基础能力
 
-```bash
-cd g2rain-infra-startup
-mvn spring-boot:run
-```
+该仓库默认不负责：
+- 不负责具体业务域的产品流程和业务前端实现
+- 不替代网关统一入口、IAM 认证协议或部署编排职责
 
-默认 HTTP 端口 **8080**（可通过环境变量 `SERVER_PORT` 覆盖）。激活的配置文件由 `SPRING_PROFILES_ACTIVE` 控制，默认引用 `dev` 等本地/开发配置。
+## 主要 HTTP 路径
 
-### 4. API 文档
+| 方法 | 路径 | 说明 |
+| --- | --- | --- |
+| DELETE | /dictionary_item/{id} | 对外暴露的服务接口 |
+| DELETE | /dictionary_usage/{id} | 对外暴露的服务接口 |
+| DELETE | /g2rain_raindrop/{id} | 对外暴露的服务接口 |
+| DELETE | /i18n_message/{id} | 对外暴露的服务接口 |
+| DELETE | /locale_setting/{id} | 对外暴露的服务接口 |
+| GET | /abc | 对外暴露的服务接口 |
+| GET | /business | 对外暴露的服务接口 |
+| GET | /g2rain_raindrop/biz_tag_dict | 对外暴露的服务接口 |
+| GET | /i18n_message/i18n_message_usages | 对外暴露的服务接口 |
+| GET | /i18n_message/locale | 对外暴露的服务接口 |
+| GET | /i18n_message/tag_dict | 对外暴露的服务接口 |
+| GET | /list | 对外暴露的服务接口 |
+| GET | /locale_setting/code_name_map | 对外暴露的服务接口 |
+| GET | /locale_setting/get_language_countries | 对外暴露的服务接口 |
+| GET | /locale_setting/locale_dict | 对外暴露的服务接口 |
+| GET | /localized_options | 对外暴露的服务接口 |
+| GET | /page | 对外暴露的服务接口 |
+| GET | /snowflake | 对外暴露的服务接口 |
+| GET | /tree | 对外暴露的服务接口 |
+| POST | /dictionary_item/save | 对外暴露的服务接口 |
+| POST | /dictionary_usage/save | 对外暴露的服务接口 |
+| POST | /g2rain_raindrop/save | 对外暴露的服务接口 |
+| POST | /i18n_message/save | 对外暴露的服务接口 |
+| POST | /locale_setting/save | 对外暴露的服务接口 |
 
-服务启动后，可通过 **springdoc-openapi** 提供的 UI 访问接口文档（路径以实际 springdoc 版本为准，一般为 `/swagger-ui.html` 或 `/swagger-ui/index.html`）。
+## 关联仓库
 
----
-
-## 配置说明
-
-以下为常用环境变量与配置项（详见 `g2rain-infra-startup/src/main/resources/application.yml` 及 Nacos 中的 `g2rain-infra.yml`）。
-
-| 变量 / 配置 | 说明 |
-|-------------|------|
-| `SERVER_PORT` | HTTP 端口，默认 `8080` |
-| `SPRING_PROFILES_ACTIVE` | Spring Profile，默认 `dev` |
-| `NACOS_SERVER_ADDR` | Nacos 地址，默认 `127.0.0.1:8848` |
-| `SPRING_CLOUD_NACOS_*` | Nacos 鉴权、命名空间、分组等（建议使用环境变量或密钥管理注入，勿在生产使用弱默认口令） |
-
-**安全提示**：请勿将生产环境数据库口令、Nacos 密码等敏感信息提交到公开仓库；优先使用 Nacos 加密配置、环境变量或密钥平台。
-
----
-
-## 容器镜像
-
-`g2rain-infra-startup` 模块集成了 **Jib**，可在配置好镜像仓库后执行构建（示例，具体以你环境为准）：
-
-```bash
-mvn -pl g2rain-infra-startup -am compile jib:build
-# 或构建到本地 Docker daemon:
-# mvn -pl g2rain-infra-startup -am compile jib:dockerBuild
-```
-
-基础镜像与镜像名见该模块 `pom.xml` 中 `jib-maven-plugin` 配置。
-
----
+| 仓库 | 协作关系 |
+| --- | --- |
+| g2rain-common | 复用平台公共规范、通用模型、工具能力或基础依赖约束。 |
 
 ## 参与贡献
 
-我们欢迎 Issue 与 Pull Request。建议流程：
+我们欢迎所有形式的贡献：Issue 反馈、文档改进、功能建议与代码提交。
 
-1. **Fork** 本仓库并创建特性分支。
-2. 保持提交信息清晰，改动与 Issue 或讨论主题对应。
-3. 提交 **PR** 前在本地执行编译与必要测试：`mvn clean verify`（或项目约定的 CI 命令）。
-4. 若改动涉及行为变更或新能力，请在 PR 描述中说明动机、使用方式及兼容性影响。
+推荐流程：
 
-行为准则：请保持尊重、专业与建设性沟通；骚扰与歧视性内容不被接受。
+1. Fork 本仓库。
+2. 创建特性分支：`git checkout -b feature/your-feature-name`。
+3. 提交更改：`git commit -m "Add some feature"`。
+4. 推送分支：`git push origin feature/your-feature-name`。
+5. 提交 Pull Request。
 
----
+代码贡献前请尽量补充必要的测试和文档，并确保构建、测试与静态检查通过。
 
 ## 许可证
 
-本仓库根目录下的 [LICENSE](LICENSE) 文件适用 **Apache License, Version 2.0**。
+本项目基于 [Apache 2.0许可证](https://github.com/g2rain/g2rain-common/blob/main/LICENSE) 开源。
 
-```
-Copyright © 2025 g2rain.com
-```
+## 联系我们
 
-使用本软件即表示你同意许可证条款。商标与品牌使用请以组织说明为准。
+- Issues: [GitHub Issues](https://github.com/g2rain/g2rain/issues)
+- 讨论: [GitHub Discussions](https://github.com/g2rain/g2rain/discussions)
+- 邮箱: g2rain_developer@163.com
 
----
+## 致谢
 
-## 链接与社区
-
-- **组织**：谷雨开源（G2Rain）
-- **官网**：<https://www.g2rain.com>
-- **问题反馈**：请在托管平台提交 **Issue**（请附上版本、JDK、复现步骤与日志片段）。
+感谢所有为 g2rain 项目提交 Issue、代码、文档、建议和使用反馈的开发者们！
