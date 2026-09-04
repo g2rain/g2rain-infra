@@ -1,6 +1,6 @@
 # 架构差异与接入项
 
-项目当前按 `java-domain-service 1.0.0` 准备接入，但尚未登记中央项目目录，因此状态为 `planned`。
+项目已在中央项目目录按 `java-domain-service 1.0.0` 登记为 `planned`。以下差异关闭并验证前，不应宣称已正式采用该 Profile。
 
 ## INF-001：测试覆盖为空
 

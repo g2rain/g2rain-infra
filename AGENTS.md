@@ -6,7 +6,7 @@
 
 - Profile：`java-domain-service 1.0.0`
 - 固定引用：`architecture-v1.0.0`
-- 当前状态：`planned`；完成 `docs/architecture/deviations.md` 的接入项并登记中央项目目录后才能改为 `adopted`
+- 当前状态：已在中央项目目录登记为 `planned`；完成 `docs/architecture/deviations.md` 的接入项后才能改为 `adopted`
 
 ## 开始工作前
 
