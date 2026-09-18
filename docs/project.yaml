@@ -1,0 +1,113 @@
+schemaVersion: 1
+name: g2rain-infra
+family: backend-foundation-service
+role: 平台基础元数据与分布式发号服务
+language: Java
+buildTool: Maven
+
+architectureBaseline:
+  repository: https://github.com/g2rain/g2rain
+  ref: architecture-v1.0.0
+  profile: docs/architecture/profiles/java-domain-service
+  version: 1.0.0
+  status: planned
+  releasedAt: "2026-08-24"
+  deviations: docs/architecture/deviations.md
+
+ownership:
+  owns:
+    - 字典用途、字典项与树形、本地化字典查询
+    - 地域语言设置和国际化消息
+    - 错误消息缓存同步事件
+    - Redis Worker 租约 Snowflake 发号
+    - MySQL 业务号段配置与分配
+  excludes:
+    - 网关动态路由、统一入口鉴权和请求转发
+    - IAM 登录、OAuth/OIDC、Token 和 Session
+    - 具体业务域数据与前端页面
+    - 部署编排和生产数据库迁移执行
+
+modules:
+  - name: g2rain-infra-api
+    path: g2rain-infra-api
+    role: 查询与发号契约
+    mayDependOn: []
+  - name: g2rain-infra-biz
+    path: g2rain-infra-biz
+    role: 基础元数据、事件与发号实现
+    mayDependOn:
+      - g2rain-infra-api
+  - name: g2rain-infra-startup
+    path: g2rain-infra-startup
+    role: Spring Boot 运行时组装
+    mayDependOn:
+      - g2rain-infra-biz
+
+runtime:
+  mainClass: com.g2rain.infra.Application
+  defaultPort: 8080
+  defaultProfile: dev
+  minimumVersions:
+    java: "25"
+    mysql: "8.0.13"
+  dependencies:
+    - MySQL
+    - Redis
+    - Nacos
+
+commands:
+  verify: mvn clean verify
+  run: mvn -pl g2rain-infra-startup -am spring-boot:run
+  codegen: mvn g2rain-crafter:bootstrap
+  image: ./build.sh <tag>
+
+validation:
+  lastVerifiedAt: "2026-09-04"
+  command: mvn clean verify
+  result: passed
+  testsRun: 0
+  note: 四个 Reactor 项目构建成功，但三个模块均无测试源码
+
+architectureRules:
+  - 模块依赖方向固定为 startup -> biz -> api
+  - API 模块只发布查询与发号契约，写接口由 App 经 Gateway 调用 Biz Controller
+  - 平台公共元数据当前不按 organId 分租户，写入口仍需认证、授权和审计
+  - Snowflake Worker ID 依赖 Redis 租约，租约失效后不得继续发号
+  - 业务号段依赖 MySQL 原子更新、业务标签唯一和双缓冲预取
+  - 错误消息变化通过 g2rain-syncer 发布缓存同步事件
+  - route_definition 仅存在于 codegen 配置，不属于当前已实现能力
+
+documentation:
+  entry: docs/index.md
+  architecture: docs/architecture/overview.md
+  decisions: docs/decisions
+  agentEntry: AGENTS.md
+  required:
+    - docs/requirements/README.md
+    - docs/community.md
+    - docs/architecture/overview.md
+    - docs/architecture/modules.md
+    - docs/architecture/dependencies.md
+    - docs/architecture/runtime-flows.md
+    - docs/architecture/deviations.md
+    - docs/development/local-development.md
+    - docs/development/code-conventions.md
+    - docs/development/api-conventions.md
+    - docs/development/database-conventions.md
+    - docs/development/testing.md
+    - docs/development/definition-of-done.md
+    - docs/development/code-generation.md
+    - docs/security/security-boundaries.md
+    - docs/operations/configuration.md
+    - docs/operations/deployment.md
+    - docs/operations/observability.md
+    - docs/operations/troubleshooting.md
+
+aiCoding:
+  instructionEntry: AGENTS.md
+  requirementTemplate: docs/requirements/README.md
+  validation:
+    - 检查需求、中央 Profile、项目差异、源码、配置、SQL、测试和 Git Diff
+    - 执行 mvn clean verify
+    - 动态检查文档链接与元数据一致性
+    - 报告未验证事项和剩余风险
