@@ -1,5 +1,7 @@
 package com.g2rain.infra.service.impl;
 
+
+import lombok.extern.slf4j.Slf4j;
 import com.g2rain.common.exception.BusinessException;
 import com.g2rain.common.exception.LocalizedErrorMessage;
 import com.g2rain.common.exception.SystemErrorCode;
@@ -46,6 +48,7 @@ import java.util.stream.Collectors;
  * @author G2rain Generator
  */
 @Service(value = "i18nMessageServiceImpl")
+@Slf4j
 public class I18nMessageServiceImpl implements I18nMessageService {
 
     @Resource(name = "i18nMessageDao")
@@ -98,6 +101,7 @@ public class I18nMessageServiceImpl implements I18nMessageService {
                 try {
                     objectMapper.readTree(dto.getExtendField());
                 } catch (Exception e) {
+                    log.error("failed to save", e);
                     throw new BusinessException(
                         SystemErrorCode.PARAM_VAL_INVALID,
                         "extendField"
