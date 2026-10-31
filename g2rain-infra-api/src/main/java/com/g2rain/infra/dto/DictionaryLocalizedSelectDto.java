@@ -35,6 +35,12 @@ public class DictionaryLocalizedSelectDto {
     private String usageCode;
 
     /**
+     * i18n 消息用途（服务端注入，固定 DICTIONARY）
+     */
+    @Schema(hidden = true, description = "i18n 消息用途")
+    private String messageUsageCode;
+
+    /**
      * 语言编码,如 zh（服务端注入）
      */
     @Schema(hidden = true, description = "语言编码")

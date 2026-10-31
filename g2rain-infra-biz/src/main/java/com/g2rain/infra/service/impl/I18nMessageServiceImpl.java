@@ -115,10 +115,11 @@ public class I18nMessageServiceImpl implements I18nMessageService {
             SystemErrorCode.PARAM_VAL_INVALID, "messageUsageCode"
         );
 
-        // 页面文案, 标签必填
-        if (i18nMsgUsage.equals(I18nMsgUsage.UI_MESSAGE)) {
+        // 页面文案、字典翻译：标签必填；错误码不设标签
+        if (i18nMsgUsage.equals(I18nMsgUsage.UI_MESSAGE)
+            || i18nMsgUsage.equals(I18nMsgUsage.DICTIONARY)) {
             Asserts.isTrue(Objects.nonNull(dto.getTag()), SystemErrorCode.PARAM_REQUIRED, "tag");
-        } else {// 非页面文案, 不需要设置标签
+        } else {
             dto.setTag(null);
         }
 

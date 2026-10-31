@@ -313,7 +313,8 @@
     <select id="selectAllTags" resultType="java.lang.String">
         SELECT DISTINCT tag
         FROM i18n_message
-        WHERE tag IS NOT NULL
+        WHERE message_usage_code = 'UI_MESSAGE'
+          AND tag IS NOT NULL
           AND tag != ''
         ORDER BY tag
     </select>
