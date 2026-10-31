@@ -7062,4 +7062,7 @@ VALUES
        (6669, 'UI_MESSAGE', 'AGENT', 'ja', 'JP', 'AGENT_PROMPT_TEMPLATE_EMPTY', '質問テンプレートはありません', null, '2026-11-01 00:00:00', '2026-11-01 00:00:00'),
        (6670, 'UI_MESSAGE', 'AGENT', 'zh', 'CN', 'AGENT_PROMPT_TEMPLATE_DELETE_CONFIRM', '确认删除问题模板「{id}」吗？', null, '2026-11-01 00:00:00', '2026-11-01 00:00:00'),
        (6671, 'UI_MESSAGE', 'AGENT', 'en', 'US', 'AGENT_PROMPT_TEMPLATE_DELETE_CONFIRM', 'Delete prompt template “{id}”?', null, '2026-11-01 00:00:00', '2026-11-01 00:00:00'),
-       (6672, 'UI_MESSAGE', 'AGENT', 'ja', 'JP', 'AGENT_PROMPT_TEMPLATE_DELETE_CONFIRM', '質問テンプレート「{id}」を削除しますか？', null, '2026-11-01 00:00:00', '2026-11-01 00:00:00');
+       (6672, 'UI_MESSAGE', 'AGENT', 'ja', 'JP', 'AGENT_PROMPT_TEMPLATE_DELETE_CONFIRM', '質問テンプレート「{id}」を削除しますか？', null, '2026-11-01 00:00:00', '2026-11-01 00:00:00'),
+       (6673, 'UI_MESSAGE', 'MAIN_SHELL', 'zh', 'CN', 'chat_prompt_template', '首页推荐问题', null, '2026-11-01 00:00:00', '2026-11-01 00:00:00'),
+       (6674, 'UI_MESSAGE', 'MAIN_SHELL', 'en', 'US', 'chat_prompt_template', 'Suggested Questions', null, '2026-11-01 00:00:00', '2026-11-01 00:00:00'),
+       (6675, 'UI_MESSAGE', 'MAIN_SHELL', 'ja', 'JP', 'chat_prompt_template', 'おすすめの質問', null, '2026-11-01 00:00:00', '2026-11-01 00:00:00');
