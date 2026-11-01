@@ -10,7 +10,7 @@
 [![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-2025.1.4-586069?logo=spring&logoColor=white)](https://spring.io/projects/spring-cloud)
 [![Maven](https://img.shields.io/badge/build-Maven-C71A36?logo=apachemaven&logoColor=white)](https://maven.apache.org/)
 
-> G2rain（谷雨）是面向企业的开源智能体平台，连接模型、知识与业务工具，以 SaaS 基座和应用开发工具链支撑智能应用落地。`g2rain-infra` 仅提供其中的平台基础元数据与分布式发号能力，不单独交付平台的知识库、智能体、权限、业务应用或部署能力。
+> G2rain（谷雨）是面向企业的开源智能体平台，连接模型、知识与业务工具，以 SaaS 基座和应用开发工具链支撑智能应用落地；智能体平台已经开放并开源。`g2rain-infra` 仅提供其中的平台基础元数据与分布式发号能力，不单独交付平台的知识库、智能体、权限、业务应用或部署能力。
 
 `g2rain-infra` 是 g2rain 的平台基础元数据与分布式发号服务，统一维护字典、地域语言和国际化消息，并提供 Redis Worker 租约 Snowflake 与 MySQL 号段两种 ID 分配能力。
 
