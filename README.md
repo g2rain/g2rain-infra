@@ -102,6 +102,13 @@ Infra 管理平台公共字典、Locale、国际化消息及分布式 ID，为�
 | 本地运行 | `mvn -pl g2rain-infra-startup -am spring-boot:run` | 本地 Spring Boot 进程 | 使用当前 profile 启动服务。 |
 | 本地镜像 | `./build.sh <tag>` | `ghcr.io/g2rain/g2rain-infra:<tag>` | 通过 Jib 构建；先运行完整 Maven 验证，再使用同一 Jib 配置构建本地镜像。 |
 
+### GHCR 镜像
+
+- 镜像地址：`ghcr.io/g2rain/g2rain-infra`。
+- 稳定版本使用明确标签，例如 `ghcr.io/g2rain/g2rain-infra:1.0.0`；每次发布还会生成可追溯的 `sha-<完整提交 SHA>` 标签，不自动更新 `latest`。
+- 包公开后可拉取指定版本：`docker pull ghcr.io/g2rain/g2rain-infra:1.0.0`。私有包须先以具有 `read:packages` 权限的凭据登录 GHCR。
+- 仅推送精确格式的 `v<major>.<minor>.<patch>` Git tag 时，GitHub Actions 才会构建并推送镜像；tag 提交必须在 `main` 历史中，并带有同名发布说明。
+
 ## 配置与安全
 
 - 默认端口为 `8080`、profile 为 `dev`，运行配置位于 `g2rain-infra-startup/src/main/resources/application.yml`。
