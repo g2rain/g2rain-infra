@@ -64,7 +64,7 @@ Infra 管理平台公共字典、Locale、国际化消息及分布式 ID，为�
 | Snowflake 发号 | 通过 Redis Lua 分配 Worker ID，使用租约续期和时钟回拨保护生成 64 位 ID。 |
 | 业务号段发号 | 通过 MySQL 原子推进号段，使用双缓冲预取和动态步长分配业务 ID。 |
 
-## 技术栈
+项目正按 [`java-domain-service 1.0.0`](https://github.com/g2rain/g2rain/tree/architecture-v1.0.0/docs/architecture/profiles/java-domain-service) 准备接入，当前状态为 `planned`；已知差异见[架构差异与接入项](docs/architecture/deviations.md)。
 
 | 类别 | 说明 |
 | --- | --- |
