@@ -22,6 +22,15 @@
         Provides essential building blocks to empower robust, enterprise-ready applications.
     </description>
 
+    <url>https://github.com/g2rain/g2rain-infra</url>
+
+    <scm>
+        <url>https://github.com/g2rain/g2rain-infra</url>
+        <connection>scm:git:https://github.com/g2rain/g2rain-infra.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/g2rain/g2rain-infra.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
     <modules>
         <module>g2rain-infra-api</module>
         <module>g2rain-infra-biz</module>
