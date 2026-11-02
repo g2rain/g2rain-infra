@@ -1,5 +1,7 @@
 package com.g2rain.infra.service.impl;
 
+
+import lombok.extern.slf4j.Slf4j;
 import com.g2rain.common.exception.BusinessException;
 import com.g2rain.common.exception.LocalizedErrorMessage;
 import com.g2rain.common.exception.SystemErrorCode;
@@ -46,6 +48,7 @@ import java.util.stream.Collectors;
  * @author G2rain Generator
  */
 @Service(value = "i18nMessageServiceImpl")
+@Slf4j
 public class I18nMessageServiceImpl implements I18nMessageService {
 
     @Resource(name = "i18nMessageDao")
@@ -98,6 +101,7 @@ public class I18nMessageServiceImpl implements I18nMessageService {
                 try {
                     objectMapper.readTree(dto.getExtendField());
                 } catch (Exception e) {
+                    log.error("failed to save", e);
                     throw new BusinessException(
                         SystemErrorCode.PARAM_VAL_INVALID,
                         "extendField"
@@ -111,10 +115,11 @@ public class I18nMessageServiceImpl implements I18nMessageService {
             SystemErrorCode.PARAM_VAL_INVALID, "messageUsageCode"
         );
 
-        // 页面文案, 标签必填
-        if (i18nMsgUsage.equals(I18nMsgUsage.UI_MESSAGE)) {
+        // 页面文案、字典翻译：标签必填；错误码不设标签
+        if (i18nMsgUsage.equals(I18nMsgUsage.UI_MESSAGE)
+            || i18nMsgUsage.equals(I18nMsgUsage.DICTIONARY)) {
             Asserts.isTrue(Objects.nonNull(dto.getTag()), SystemErrorCode.PARAM_REQUIRED, "tag");
-        } else {// 非页面文案, 不需要设置标签
+        } else {
             dto.setTag(null);
         }
 

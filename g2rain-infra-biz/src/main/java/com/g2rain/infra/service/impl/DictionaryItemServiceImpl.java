@@ -19,6 +19,7 @@ import com.g2rain.infra.dto.DictionaryItemSelectDto;
 import com.g2rain.infra.dto.DictionaryItemTreeSelectDto;
 import com.g2rain.infra.dto.DictionaryLocalizedSelectDto;
 import com.g2rain.infra.dto.DictionaryUsageSelectDto;
+import com.g2rain.infra.enums.I18nMsgUsage;
 import com.g2rain.infra.service.DictionaryItemService;
 import com.g2rain.infra.vo.DictionaryItemTreeVo;
 import com.g2rain.infra.vo.DictionaryItemVo;
@@ -146,6 +147,7 @@ public class DictionaryItemServiceImpl implements DictionaryItemService {
             locale = Locale.getDefault();
         }
 
+        selectDto.setMessageUsageCode(I18nMsgUsage.DICTIONARY.name());
         selectDto.setLanguageCode(locale.getLanguage());
         selectDto.setRegionCode(locale.getCountry());
         return dictionaryItemDao.selectLocalizedList(selectDto)

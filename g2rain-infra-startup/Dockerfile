@@ -1,4 +1,4 @@
-FROM eclipse-temurin:25-jre-alpine
+FROM eclipse-temurin:25.0.4.1_1-jre-alpine
 # 构建参数
 ARG JAR_FILE
 ARG BUILD_VERSION

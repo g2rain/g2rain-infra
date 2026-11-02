@@ -6,11 +6,11 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Java](https://img.shields.io/badge/Java-25-437291?logo=openjdk&logoColor=white)](https://openjdk.org/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.5-6DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
-[![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-2025.1.1-586069?logo=spring&logoColor=white)](https://spring.io/projects/spring-cloud)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.2-6DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-2025.1.4-586069?logo=spring&logoColor=white)](https://spring.io/projects/spring-cloud)
 [![Maven](https://img.shields.io/badge/build-Maven-C71A36?logo=apachemaven&logoColor=white)](https://maven.apache.org/)
 
-> 下一代AI软件开发范式，AI原生Agent平台，开源的企业级SaaS底座。
+> G2rain（谷雨）是面向企业的开源智能体平台，连接模型、知识与业务工具，以 SaaS 基座和应用开发工具链支撑智能应用落地；智能体平台已经开放并开源。`g2rain-infra` 仅提供其中的平台基础元数据与分布式发号能力，不单独交付平台的知识库、智能体、权限、业务应用或部署能力。
 
 `g2rain-infra` 是 g2rain 的平台基础元数据与分布式发号服务，统一维护字典、地域语言和国际化消息，并提供 Redis Worker 租约 Snowflake 与 MySQL 号段两种 ID 分配能力。
 
@@ -64,11 +64,11 @@ Infra 管理平台公共字典、Locale、国际化消息及分布式 ID，为�
 | Snowflake 发号 | 通过 Redis Lua 分配 Worker ID，使用租约续期和时钟回拨保护生成 64 位 ID。 |
 | 业务号段发号 | 通过 MySQL 原子推进号段，使用双缓冲预取和动态步长分配业务 ID。 |
 
-## 技术栈
+项目正按 [`java-domain-service 1.0.0`](https://github.com/g2rain/g2rain/tree/architecture-v1.0.0/docs/architecture/profiles/java-domain-service) 准备接入，当前状态为 `planned`；已知差异见[架构差异与接入项](docs/architecture/deviations.md)。
 
 | 类别 | 说明 |
 | --- | --- |
-| 运行时 | Java 25、Spring Boot 4.0.5、Spring Cloud 2025.1.1 |
+| 运行时 | Java 25、Spring Boot 4.1.2、Spring Cloud 2025.1.4 |
 | 安全与令牌 | g2rain-starter-aegis-core |
 | 数据访问 | MyBatis 4.0.1、MySQL Connector/J 9.6.0、MapStruct 1.6.3 |
 | 基础设施 | MySQL、Redis、Nacos、Spring Cloud Stream Redis Binder |
@@ -100,7 +100,14 @@ Infra 管理平台公共字典、Locale、国际化消息及分布式 ID，为�
 | 完整验证 | `mvn clean verify` | 三模块构建结果 | 当前没有测试源码，结果主要证明编译和打包。 |
 | 可执行 Jar | `mvn clean package` | `g2rain-infra-startup/target/g2rain-infra-startup-1.0.0.jar` | 由 Startup 模块生成 Spring Boot Jar。 |
 | 本地运行 | `mvn -pl g2rain-infra-startup -am spring-boot:run` | 本地 Spring Boot 进程 | 使用当前 profile 启动服务。 |
-| 本地镜像 | `./build.sh <tag>` | `g2rain/g2rain-infra:<tag>` | 通过 Jib 构建；脚本自身跳过测试，发布前需先验证。 |
+| 本地镜像 | `./build.sh <tag>` | `ghcr.io/g2rain/g2rain-infra:<tag>` | 通过 Jib 构建；先运行完整 Maven 验证，再使用同一 Jib 配置构建本地镜像。 |
+
+### GHCR 镜像
+
+- 镜像地址：`ghcr.io/g2rain/g2rain-infra`。
+- 稳定版本使用明确标签，例如 `ghcr.io/g2rain/g2rain-infra:1.0.0`；每次发布还会生成可追溯的 `sha-<完整提交 SHA>` 标签，不自动更新 `latest`。
+- 包公开后可拉取指定版本：`docker pull ghcr.io/g2rain/g2rain-infra:1.0.0`。私有包须先以具有 `read:packages` 权限的凭据登录 GHCR。
+- 仅推送精确格式的 `v<major>.<minor>.<patch>` Git tag 时，GitHub Actions 才会构建并推送镜像；tag 提交必须在 `main` 历史中，并带有同名发布说明。
 
 ## 配置与安全
 
@@ -108,6 +115,8 @@ Infra 管理平台公共字典、Locale、国际化消息及分布式 ID，为�
 - MySQL、Redis 和 Nacos 配置应由环境变量、Secret 或受控配置中心注入。
 - 仓库当前仍包含本地开发默认凭据，不得用于共享或生产环境。
 - 保存、删除和号段配置属于高影响操作，应携带 IAM Token 经 Gateway 调用并保留授权与审计证据。
+
+稳定版镜像发布与 GHCR 权限、可见性和部署要求见[构建与部署](docs/operations/deployment.md#容器镜像发布ghcr)。仅推送 `v<major>.<minor>.<patch>` tag 才会触发镜像发布；不会发布 `latest`、创建 GitHub Release 或部署服务。
 
 详见[配置说明](docs/operations/configuration.md)与[安全边界](docs/security/security-boundaries.md)。
 

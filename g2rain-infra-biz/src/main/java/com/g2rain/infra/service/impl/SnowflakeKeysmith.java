@@ -180,6 +180,7 @@ public class SnowflakeKeysmith implements Keysmith {
             // 抢 workerId
             this.workerId = redisWorkerIdManager.acquireWorkerId();
         } catch (Exception e) {
+            log.error("failed to start snowflake keysmith", e);
             throw new BusinessException(InfraErrorCode.SNOWFLAKE_WORKER_ID_FAIL);
         }
 

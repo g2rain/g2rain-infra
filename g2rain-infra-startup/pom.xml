@@ -102,14 +102,20 @@
                 <configuration>
                     <!-- 基础镜像，根据实际 JDK 版本选择 -->
                     <from>
-                        <image>docker://eclipse-temurin:25-jre</image>
+                        <image>eclipse-temurin:25.0.4.1_1-jre</image>
                     </from>
                     <!-- 目标镜像名称 -->
                     <to>
-                        <image>g2rain/g2rain-infra:${project.version}</image>
+                        <image>ghcr.io/g2rain/g2rain-infra:${project.version}</image>
                     </to>
                     <!-- 容器运行配置 -->
                     <container>
+                        <labels>
+                            <org.opencontainers.image.source>https://github.com/g2rain/g2rain-infra</org.opencontainers.image.source>
+                            <org.opencontainers.image.licenses>Apache-2.0</org.opencontainers.image.licenses>
+                            <org.opencontainers.image.title>g2rain-infra</org.opencontainers.image.title>
+                            <org.opencontainers.image.version>${project.version}</org.opencontainers.image.version>
+                        </labels>
                         <mainClass>com.g2rain.infra.Application</mainClass>
                         <ports>
                             <port>8080</port>
