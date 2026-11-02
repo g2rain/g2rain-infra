@@ -349,7 +349,8 @@
         </where>
         ) di
         LEFT JOIN i18n_message i18n_exact
-        ON i18n_exact.message_usage_code = 'DICTIONARY'
+        ON i18n_exact.message_usage_code = #{messageUsageCode, jdbcType=VARCHAR}
+        AND i18n_exact.tag = di.usage_code
         AND i18n_exact.message_code = di.code
         AND i18n_exact.language_code = #{languageCode, jdbcType=VARCHAR}
         <choose>
@@ -362,7 +363,8 @@
         </choose>
         <if test="regionCode != null and regionCode != ''">
             LEFT JOIN i18n_message i18n_lang
-            ON i18n_lang.message_usage_code = 'DICTIONARY'
+            ON i18n_lang.message_usage_code = #{messageUsageCode, jdbcType=VARCHAR}
+            AND i18n_lang.tag = di.usage_code
             AND i18n_lang.message_code = di.code
             AND i18n_lang.language_code = #{languageCode, jdbcType=VARCHAR}
             AND (i18n_lang.region_code IS NULL OR i18n_lang.region_code = '')
