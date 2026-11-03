@@ -1,0 +1,80 @@
+name: Publish container image
+
+on:
+  push:
+    tags:
+      - 'v[0-9]*'
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: container-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Validate release tag and select image tags
+        id: image
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_REF_TYPE" != "tag" ]]; then
+            echo "Expected a tag push, but got ref type '$GITHUB_REF_TYPE'." >&2
+            exit 1
+          fi
+          if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Tag '$GITHUB_REF_NAME' must use exact v<major>.<minor>.<patch> format." >&2
+            exit 1
+          fi
+          tag_commit="$(git rev-parse "${GITHUB_REF_NAME}^{commit}")"
+          if ! git merge-base --is-ancestor "$tag_commit" origin/main; then
+            echo "Tag '$GITHUB_REF_NAME' points to a commit that is not in origin/main history." >&2
+            exit 1
+          fi
+          if [[ ! -s "docs/releases/$GITHUB_REF_NAME.md" ]]; then
+            echo "Missing release notes: docs/releases/$GITHUB_REF_NAME.md. Add the matching non-empty file to main before creating the tag." >&2
+            exit 1
+          fi
+          echo "name=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+          echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          echo "commit=$tag_commit" >> "$GITHUB_OUTPUT"
+          echo "sha_tag=sha-${tag_commit}" >> "$GITHUB_OUTPUT"
+      - name: Set up JDK 25
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Build and test all modules
+        run: mvn --batch-mode --no-transfer-progress clean install
+      - name: Log in to GHCR
+        env:
+          GHCR_TOKEN: ${{ github.token }}
+        run: printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+      - name: Build and push image tags with Jib
+        env:
+          APP_IMAGE: ${{ steps.image.outputs.name }}
+          EXTRA_TAGS: ${{ steps.image.outputs.sha_tag }}
+        run: ./build.sh "${{ steps.image.outputs.version }}" push
+      - name: Record published image
+        if: success()
+        run: |
+          {
+            echo '## Container image published'
+            echo
+            echo "- \`${{ steps.image.outputs.name }}:${{ steps.image.outputs.version }}\`"
+            echo "- \`${{ steps.image.outputs.name }}:${{ steps.image.outputs.sha_tag }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Log out of GHCR
+        if: always()
+        run: docker logout ghcr.io
