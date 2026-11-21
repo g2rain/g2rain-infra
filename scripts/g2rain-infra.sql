@@ -7218,3 +7218,9 @@ VALUES (6788, 'UI_MESSAGE', 'AGENT', 'zh', 'CN', 'AGENT_LINT_SOURCE_TYPE', 'sour
        (6795, 'UI_MESSAGE', 'AGENT', 'zh', 'CN', 'AGENT_CONTRACT_SEMANTIC_CONTRACT', '契约自身', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00'),
        (6796, 'UI_MESSAGE', 'AGENT', 'en', 'US', 'AGENT_CONTRACT_SEMANTIC_CONTRACT', 'The contract itself', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00'),
        (6797, 'UI_MESSAGE', 'AGENT', 'ja', 'JP', 'AGENT_CONTRACT_SEMANTIC_CONTRACT', '契約自身', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00');
+
+-- 智能体运行时：调用前需先补查数据
+INSERT INTO `i18n_message` (`id`, `message_usage_code`, `tag`, `language_code`, `region_code`, `message_code`, `message_text`, `extend_field`, `create_time`, `update_time`)
+VALUES (6798, 'ERROR_CODE', NULL, 'zh', 'CN', 'agent_runtime.42253', '调用前需先补查数据：{0:code}', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00'),
+       (6799, 'ERROR_CODE', NULL, 'en', 'US', 'agent_runtime.42253', 'Data must be looked up before this call: {0:code}', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00'),
+       (6800, 'ERROR_CODE', NULL, 'ja', 'JP', 'agent_runtime.42253', '呼び出し前にデータの再照会が必要です：{0:code}', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00');
