@@ -7202,3 +7202,19 @@ VALUES (6764, 'UI_MESSAGE', 'AGENT', 'zh', 'CN', 'AGENT_LINT_SOURCE_ONTOLOGY', '
        (6782, 'UI_MESSAGE', 'AGENT', 'zh', 'CN', 'AGENT_CONTRACT_SEMANTIC_HINT', '动作语义由本体提供', null, '2026-11-18 20:50:00', '2026-11-18 20:50:00'),
        (6783, 'UI_MESSAGE', 'AGENT', 'en', 'US', 'AGENT_CONTRACT_SEMANTIC_HINT', 'Action semantics are provided by the ontology', null, '2026-11-18 20:50:00', '2026-11-18 20:50:00'),
        (6784, 'UI_MESSAGE', 'AGENT', 'ja', 'JP', 'AGENT_CONTRACT_SEMANTIC_HINT', '動作意味はオントロジーから提供されます', null, '2026-11-18 20:50:00', '2026-11-18 20:50:00');
+
+INSERT INTO `i18n_message` (`id`, `message_usage_code`, `tag`, `language_code`, `region_code`, `message_code`, `message_text`, `extend_field`, `create_time`, `update_time`)
+VALUES (6785, 'UI_MESSAGE', 'AGENT_RUNTIME', 'zh', 'CN', 'approval.notice', '⚠ 注意：{message}', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00'),
+       (6786, 'UI_MESSAGE', 'AGENT_RUNTIME', 'en', 'US', 'approval.notice', '⚠ Note: {message}', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00'),
+       (6787, 'UI_MESSAGE', 'AGENT_RUNTIME', 'ja', 'JP', 'approval.notice', '⚠ 注意：{message}', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00');
+
+INSERT INTO `i18n_message` (`id`, `message_usage_code`, `tag`, `language_code`, `region_code`, `message_code`, `message_text`, `extend_field`, `create_time`, `update_time`)
+VALUES (6788, 'UI_MESSAGE', 'AGENT', 'zh', 'CN', 'AGENT_LINT_SOURCE_TYPE', 'source.type 不能为空', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00'),
+       (6789, 'UI_MESSAGE', 'AGENT', 'en', 'US', 'AGENT_LINT_SOURCE_TYPE', 'source.type must not be empty', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00'),
+       (6790, 'UI_MESSAGE', 'AGENT', 'ja', 'JP', 'AGENT_LINT_SOURCE_TYPE', 'source.type を空にできません', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00'),
+       (6791, 'UI_MESSAGE', 'AGENT', 'zh', 'CN', 'AGENT_LINT_SOURCE_CONTRACT', '来源为契约自身时不能配置 ontology、usages', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00'),
+       (6792, 'UI_MESSAGE', 'AGENT', 'en', 'US', 'AGENT_LINT_SOURCE_CONTRACT', 'ontology and usages are not allowed when the source is the contract itself', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00'),
+       (6793, 'UI_MESSAGE', 'AGENT', 'ja', 'JP', 'AGENT_LINT_SOURCE_CONTRACT', 'ソースが契約自身の場合、ontology と usages は設定できません', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00'),
+       (6795, 'UI_MESSAGE', 'AGENT', 'zh', 'CN', 'AGENT_CONTRACT_SEMANTIC_CONTRACT', '契约自身', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00'),
+       (6796, 'UI_MESSAGE', 'AGENT', 'en', 'US', 'AGENT_CONTRACT_SEMANTIC_CONTRACT', 'The contract itself', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00'),
+       (6797, 'UI_MESSAGE', 'AGENT', 'ja', 'JP', 'AGENT_CONTRACT_SEMANTIC_CONTRACT', '契約自身', null, '2026-11-21 12:00:00', '2026-11-21 12:00:00');
