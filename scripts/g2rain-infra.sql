@@ -7314,3 +7314,15 @@ VALUES (6856, 'ERROR_CODE', NULL, 'zh', 'CN', 'agent_runtime.42262', '技能「{
        (6859, 'ERROR_CODE', NULL, 'zh', 'CN', 'agent_runtime.42263', '技能「{0:skillKey}」的执行契约版本 {1:version} 高于当前运行时支持的 {2:current}，请升级运行时', null, '2026-11-24 19:00:00', '2026-11-24 19:00:00'),
        (6860, 'ERROR_CODE', NULL, 'en', 'US', 'agent_runtime.42263', 'The execution contract version {1:version} of skill "{0:skillKey}" is higher than {2:current} supported by the current runtime. Please upgrade the runtime', null, '2026-11-24 19:00:00', '2026-11-24 19:00:00'),
        (6861, 'ERROR_CODE', NULL, 'ja', 'JP', 'agent_runtime.42263', 'スキル「{0:skillKey}」の実行契約バージョン {1:version} は、現行ランタイムがサポートする {2:current} より高いです。ランタイムをアップグレードしてください', null, '2026-11-24 19:00:00', '2026-11-24 19:00:00');
+
+-- Agent Studio：技能修订错误码
+INSERT INTO `i18n_message` (`id`, `message_usage_code`, `tag`, `language_code`, `region_code`, `message_code`, `message_text`, `extend_field`, `create_time`, `update_time`)
+VALUES (6862, 'ERROR_CODE', NULL, 'zh', 'CN', 'agent_studio.40001', '技能已被修改：期望修订号 {0:expected}，当前 {1:actual}', null, '2026-11-25 09:00:00', '2026-11-25 09:00:00'),
+       (6863, 'ERROR_CODE', NULL, 'en', 'US', 'agent_studio.40001', 'Skill has been modified: expected revision {0:expected}, current {1:actual}', null, '2026-11-25 09:00:00', '2026-11-25 09:00:00'),
+       (6864, 'ERROR_CODE', NULL, 'ja', 'JP', 'agent_studio.40001', 'スキルが変更されています：期待リビジョン {0:expected}、現在 {1:actual}', null, '2026-11-25 09:00:00', '2026-11-25 09:00:00'),
+       (6865, 'ERROR_CODE', NULL, 'zh', 'CN', 'agent_studio.40002', '修订状态不允许该操作：{0:revisionId}', null, '2026-11-25 09:00:00', '2026-11-25 09:00:00'),
+       (6866, 'ERROR_CODE', NULL, 'en', 'US', 'agent_studio.40002', 'Revision status does not allow this operation: {0:revisionId}', null, '2026-11-25 09:00:00', '2026-11-25 09:00:00'),
+       (6867, 'ERROR_CODE', NULL, 'ja', 'JP', 'agent_studio.40002', 'リビジョン状態ではこの操作はできません：{0:revisionId}', null, '2026-11-25 09:00:00', '2026-11-25 09:00:00'),
+       (6868, 'ERROR_CODE', NULL, 'zh', 'CN', 'agent_studio.40003', '修订不属于该数字员工：{0:revisionId}', null, '2026-11-25 09:00:00', '2026-11-25 09:00:00'),
+       (6869, 'ERROR_CODE', NULL, 'en', 'US', 'agent_studio.40003', 'Revision does not belong to this digital employee: {0:revisionId}', null, '2026-11-25 09:00:00', '2026-11-25 09:00:00'),
+       (6870, 'ERROR_CODE', NULL, 'ja', 'JP', 'agent_studio.40003', 'リビジョンはこのデジタル社員に属していません：{0:revisionId}', null, '2026-11-25 09:00:00', '2026-11-25 09:00:00');
