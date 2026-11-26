@@ -9,6 +9,7 @@ import com.g2rain.common.id.IdGenerator;
 import com.g2rain.common.model.PageData;
 import com.g2rain.common.model.PageSelectListDto;
 import com.g2rain.common.syncer.EventPublisherHub;
+import com.g2rain.common.syncer.EventType;
 import com.g2rain.common.utils.Asserts;
 import com.g2rain.common.utils.Moments;
 import com.g2rain.common.utils.Strings;
@@ -147,34 +148,25 @@ public class I18nMessageServiceImpl implements I18nMessageService {
         // 判断是新增还是更新
         Long id = entity.getId();
         if (Objects.isNull(id) || id == 0) {
-            // 新增：使用IdGenerator生成主键
             entity.setId(idGenerator.generateId());
             LocalDateTime now = Moments.now();
             entity.setUpdateTime(now);
             entity.setCreateTime(now);
             int success = i18nMessageDao.insert(entity);
-
-            // 广播新增错误信息
-            eventPublisherHub.sendCreate(
-                Constants.SYNC_OUTPUT_BINDING,
-                InfraSyncerEnum.ERROR_MSG.name(),
-                toLocalizedErrorMessage(entity)
-            );
-
             Asserts.greaterThan(success, 0, SystemErrorCode.CREATE_DATA_ERROR);
+            publishMessage(entity, EventType.CREATE);
         } else {
-            // 更新：直接更新
+            I18nMessagePo oldEntity = i18nMessageDao.selectById(id);
+            Asserts.isTrue(Objects.nonNull(oldEntity), SystemErrorCode.PARAM_VAL_INVALID, id);
             entity.setUpdateTime(Moments.now());
             int success = i18nMessageDao.update(entity);
-
-            // 广播修改错误信息
-            eventPublisherHub.sendUpdate(
-                Constants.SYNC_OUTPUT_BINDING,
-                InfraSyncerEnum.ERROR_MSG.name(),
-                toLocalizedErrorMessage(entity)
-            );
-
             Asserts.greaterThan(success, 0, SystemErrorCode.UPDATE_DATA_ERROR, id);
+            if (sameMessageKey(oldEntity, entity)) {
+                publishMessage(entity, EventType.UPDATE);
+            } else {
+                publishMessage(oldEntity, EventType.DELETE);
+                publishMessage(entity, EventType.CREATE);
+            }
         }
 
         return entity.getId();
@@ -189,15 +181,7 @@ public class I18nMessageServiceImpl implements I18nMessageService {
 
         // 删除国际化信息
         int total = i18nMessageDao.delete(id);
-
-        // 只有错误信息国际化需要推送广播
-        if (I18nMsgUsage.ERROR_CODE.name().equals(entity.getMessageUsageCode())) {
-            eventPublisherHub.sendDelete(
-                Constants.SYNC_OUTPUT_BINDING,
-                InfraSyncerEnum.ERROR_MSG.name(),
-                toLocalizedErrorMessage(entity)
-            );
-        }
+        publishMessage(entity, EventType.DELETE);
 
         return total;
     }
@@ -229,6 +213,36 @@ public class I18nMessageServiceImpl implements I18nMessageService {
         return i18nMessageDao.selectList(selectDto).stream()
             .map(I18nMessageConverter.INSTANCE::po2locale)
             .toList();
+    }
+
+    private boolean sameMessageKey(I18nMessagePo oldEntity, I18nMessagePo newEntity) {
+        return Objects.equals(oldEntity.getMessageUsageCode(), newEntity.getMessageUsageCode())
+            && Objects.equals(oldEntity.getTag(), newEntity.getTag())
+            && Objects.equals(oldEntity.getMessageCode(), newEntity.getMessageCode())
+            && Objects.equals(oldEntity.getLanguageCode(), newEntity.getLanguageCode())
+            && Objects.equals(oldEntity.getRegionCode(), newEntity.getRegionCode());
+    }
+
+    private void publishMessage(I18nMessagePo message, EventType action) {
+        I18nMsgUsage usage = I18nMsgUsage.fromName(message.getMessageUsageCode());
+        if (Objects.isNull(usage)) {
+            return;
+        }
+
+        String channel;
+        Object payload;
+        if (usage == I18nMsgUsage.ERROR_CODE) {
+            channel = InfraSyncerEnum.ERROR_MSG.name();
+            payload = toLocalizedErrorMessage(message);
+        } else {
+            channel = InfraSyncerEnum.I18N_MESSAGE.name();
+            payload = I18nMessageConverter.INSTANCE.po2vo(message);
+        }
+        switch (action) {
+            case CREATE -> eventPublisherHub.sendCreate(Constants.SYNC_OUTPUT_BINDING, channel, payload);
+            case UPDATE -> eventPublisherHub.sendUpdate(Constants.SYNC_OUTPUT_BINDING, channel, payload);
+            case DELETE -> eventPublisherHub.sendDelete(Constants.SYNC_OUTPUT_BINDING, channel, payload);
+        }
     }
 
     /**

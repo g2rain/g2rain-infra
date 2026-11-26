@@ -1,5 +1,5 @@
 package com.g2rain.infra.enums;
 
 public enum InfraSyncerEnum {
-    ERROR_MSG, ROUTE_DEFINE
+    ERROR_MSG, I18N_MESSAGE
 }
